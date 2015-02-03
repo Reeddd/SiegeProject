@@ -21,28 +21,43 @@ public class FirstAI : MonoBehaviour {
 			return this.priority.CompareTo (that.priority);
 		}
 	}
+	//controller object
 	Controller cont;
+	//Waypoint you are moving a troop to
 	public Waypoint second;
+	//Waypoint you are moving a troop from
 	public Waypoint first;
+	//The current timer, when the time is greater than this, you can move
 	private float timer;
+	//After a troop moves, you must wait this long before moving again
 	private float pause;
+	//Array of waypoints known to be blue (set by findBlues())
 	public Waypoint[] blues;
+	//An arraylist that holds subclasses that keep track of a nodes priority (level two uses this)
 	public ArrayList priorities;
+	//number of blue nodes controlled
 	public int bCount;
+	//Mover object
 	private Movement mover;
+	//how much money you have to buy troops
 	private int gold;
+	//Cost of a speed troop
 	private int speedCost;
+	//placeholder?
 	private Waypoint blue;
 	public bool runOnce;
+	//boolean to see if the priority of nodes have changed
 	public bool priorityChanged;
 
 	void Start ()
 	{
+		//This finds the controller object which holds information about the game, statistics for troops, and the human and AI classes
 		if(GameObject.Find ("Control")!=null)
 		{
 			GameObject control = GameObject.Find("Control");
 			cont = (Controller)(control.GetComponent("Controller"));
 		}
+		//Initial values
 		first = null;
 		second = null;
 		timer = 5f;
@@ -52,6 +67,7 @@ public class FirstAI : MonoBehaviour {
 		bCount=0;
 		gold = 0;
 		speedCost = 25;
+		//Repeats the method GimmeMoney which increments the gold variable
 		InvokeRepeating("GimmeMoney", 1.5f, 0.2f);
 		if(GameObject.Find ("TeamBlue")!=null)
 		{	
@@ -63,25 +79,35 @@ public class FirstAI : MonoBehaviour {
 	
 	void Update ()
 	{
+		//only runs once to get the priorities once everything is initialized
 		if (runOnce)
 		{
 			findPriorities();
 			runOnce = false;
 		}
+		//If the current time is greater than the timer value (set to Time.time + added time)
 		if(Time.time > timer)	
 		{
+			//Find all waypoints that are blue
 			findBlues();
+			//Picks the closest blue and moves to it
 			levelOne();
+			//Picks a blue waypoint to move to based on the priority struct
 			levelTwo();
+			//Defends a waypoint that's being attacked
 			levelThree();
+
 			if(first!=null && second!=null && first.hasTroop ())
 			{	
 				if(first.checkPCounter(second)<=4)
 				{
+					//uses the mover class to move a troop from first to second
 					mover.moveTroop (false, first, second);
+					//Increments the path counter for both waypoints (how many troops are on a path between waypoints)
 					first.plusPCounter(second);
 					second.plusPCounter (first);
 					//first.subtractS();
+					//If the waypoint has no more troops, it becomes gray (neutral)
 					first.checkIt ();
 				}
 			}
