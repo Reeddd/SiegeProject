@@ -13,11 +13,7 @@ public class Human : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
-		first = null;
-		second = null;
-		mover = (Movement)GameObject.Find ("TeamRed").GetComponent("Movement");
-		nextMove = 0.0f;
-		pause = .6f;
+
 	}
 	
 	// Update is called once per frame

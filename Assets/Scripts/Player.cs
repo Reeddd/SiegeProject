@@ -4,88 +4,43 @@ using System.Collections;
 public class Player : MonoBehaviour {
 
 	//This is a test. Repeat. This is a test, of the Emergency Warning System
+	private Movement mover;
+	public Camera camera;
 	public Waypoint second;
 	public Waypoint first;
-	private Movement mover;
-	private Controller cont;
 	private float nextMove;
 	private float pause;
-	private Troop troop;
-	public string color;
-	public Camera camera;
 	// Use this for initialization
 	void Start () 
 	{
-		first = null;
-		second = null;
-		mover = (Movement)GameObject.Find ("TeamRed").GetComponent("Movement");
-		cont = (Controller)GameObject.Find ("Control").GetComponent ("Controller");
-		nextMove = 0.0f;
-		pause = .6f;
+		mover = null;
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	//Gets the first and second nodes for movement
 	{
-		if(Input.GetMouseButtonDown(0))
+		if (mover == null) 
 		{
-			Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-			RaycastHit hit;
-			if( Physics.Raycast( ray, out hit, 1000 ) && hit.transform.gameObject.CompareTag("Waypoint"))
-      	 	{
-           		if(first==null && hit.transform.gameObject.GetComponent<Waypoint>().occupiedRed)
-				{
-					first = hit.transform.gameObject.GetComponent<Waypoint>();
-				}
-			}
-		}
-		if(!hasSecond () && hasFirst () && Input.GetMouseButtonUp(0))
-		{
-			Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-			RaycastHit hit;
-			if( Physics.Raycast( ray, out hit, 500 ) && hit.transform.gameObject.CompareTag("Waypoint") )
-      	 	{
-           		Waypoint[] temp = first.GetComponent<Waypoint>().getArray();
-				foreach(Waypoint w in temp)
-				{
-					if(w == hit.transform.gameObject.GetComponent <Waypoint>())	
-					{
-						second = hit.transform.gameObject.GetComponent<Waypoint>();
-						//GameObject.Find("Main Camera").GetComponent<ButtonDone>().enabled = true;
-						moveIt();
-						first = null;
-						second = null;
-					}
-				}
-				first=null;
-				second=null;
-			}
-			else
-			{
-				first=null;
-				second=null;
-			}
-			
+				
 		}
   	}
 	
 
 	public void moveIt()
-		{
+	{
 		if(nodesReady() && first.GetComponent<Waypoint>().hasTroop() && Time.time > nextMove && first.GetComponent<Waypoint>().occupiedRed && first.GetComponent<Waypoint>().checkRadius ())
-			{
-				moveTroop();
-				nextMove = Time.time + pause;
-			}
-			if(!first.GetComponent<Waypoint>().hasTroop ())
-			{
-				renderer.material.color = Color.white;
-			}
+		{
+			moveTroop();
+			nextMove = Time.time + pause;
 		}
-
-
+		if(!first.GetComponent<Waypoint>().hasTroop ())
+		{
+			renderer.material.color = Color.white;
+		}
+	}
 	
+
 	public void resetN()
 	{
 		first = null;
@@ -100,10 +55,7 @@ public class Player : MonoBehaviour {
 		else  
 		{return false;}
 	}
-	public void setCamerap(Camera camera)
-	{
-		this.camera = camera;
-	}
+
 	public void addUnused(GameObject troop)
 	{
 		mover.addUnused (troop);

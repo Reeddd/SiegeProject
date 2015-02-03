@@ -22,7 +22,7 @@ public class Controller : MonoBehaviour
 	private Waypoint[] waypoints;
 	private int countW;
 	private bool inArray;
-	private Player player;
+	private Human human;
 	private FirstAI ai;
 	private Camera camera;
 	private int[] Astats;
@@ -35,7 +35,7 @@ public class Controller : MonoBehaviour
 		inArray = false;
 		waypoints = new Waypoint[15];
 		countW = 0;
-		player = (Player)(this.GetComponent("Player"));
+		human = (Human)(this.GetComponent("Human"));
 		ai = (FirstAI)(this.GetComponent("FirstAI"));
 		/********** IMPORTANT ************
 		 * 
@@ -120,15 +120,15 @@ public class Controller : MonoBehaviour
 	public void setCamera(Camera camera)
 	{
 		this.camera = camera;
-		player.setCamerap (this.camera);
+		human.setCamerap (this.camera);
 	}
 	//Player methods
-	public void resetPlayer()    {player.resetN();}
-	public void PAddUnused(GameObject troop)    {player.addUnused (troop);}
-	public bool PHasFirst()    {return player.hasFirst();}
-	public bool PHasSecond()     {return player.hasSecond();}
-	public Waypoint PGetFirst()    {return player.getFirst();}
-	public Waypoint PGetSecond()   {return player.getSecond();}
+	public void resetPlayer()    {human.resetN();}
+	public void PAddUnused(GameObject troop)    {human.addUnused (troop);}
+	public bool PHasFirst()    {return human.hasFirst();}
+	public bool PHasSecond()     {return human.hasSecond();}
+	public Waypoint PGetFirst()    {return human.getFirst();}
+	public Waypoint PGetSecond()   {return human.getSecond();}
 	public void setRecent(char s)	{recent = s;}
 	public char getRecent()	{return recent;}
 	//AI methods

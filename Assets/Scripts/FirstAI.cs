@@ -21,20 +21,16 @@ public class FirstAI : MonoBehaviour {
 			return this.priority.CompareTo (that.priority);
 		}
 	}
-
-	GameObject control;
 	Controller cont;
 	public Waypoint second;
 	public Waypoint first;
 	private float timer;
 	private float pause;
-	private GameObject currTroop;
 	public Waypoint[] blues;
 	public ArrayList priorities;
 	public int bCount;
 	private Movement mover;
 	private int gold;
-	public Troop troop;
 	private int speedCost;
 	private Waypoint blue;
 	public bool runOnce;
@@ -44,7 +40,7 @@ public class FirstAI : MonoBehaviour {
 	{
 		if(GameObject.Find ("Control")!=null)
 		{
-			control = GameObject.Find("Control");	
+			GameObject control = GameObject.Find("Control");
 			cont = (Controller)(control.GetComponent("Controller"));
 		}
 		first = null;
@@ -102,9 +98,6 @@ public class FirstAI : MonoBehaviour {
 				speedCost = speedCost+1;
 			}
 		}
-			
-		//if(startMove)
-			//letsGo (currTroop);
 		
 	}
 	
@@ -140,6 +133,7 @@ public class FirstAI : MonoBehaviour {
 		{
 			priorities.Sort();
 			priorities.Reverse();
+			priorityChanged = false;
 		}
 		foreach (Priority pri in priorities)
 		{
