@@ -85,7 +85,14 @@ public class GUI_MainMenuBar : MonoBehaviour
 		if(gold >= attackCost){
 			if(GUI.Button(new Rect(250, Screen.height - 40, 70, 30), "Attack", attack))
         	{
-				GameObject.Find("TeamRed").GetComponent<Waypoint>().addTroopRedA();
+				if(cont.getHumanColor().Equals ("TeamRed"))
+				{
+					GameObject.Find(cont.getHumanColor()).GetComponent<Waypoint>().addTroopRedA();
+				}
+				else if(cont.getHumanColor().Equals ("TeamBlue"))
+				{
+					GameObject.Find(cont.getHumanColor()).GetComponent<Waypoint>().addTroopBlueA();
+				}
 				audio.PlayOneShot(spawnSound);
 				gold -= attackCost;
 				increaseCost ();
@@ -96,7 +103,14 @@ public class GUI_MainMenuBar : MonoBehaviour
 		if(gold >= defenseCost){
         	if (GUI.Button(new Rect(350, Screen.height - 40, 70, 30), "Defense", defense))
         	{
-				GameObject.Find("TeamRed").GetComponent<Waypoint>().addTroopRedD();
+				if(cont.getHumanColor().Equals ("TeamRed"))
+				{
+					GameObject.Find(cont.getHumanColor()).GetComponent<Waypoint>().addTroopRedD();
+				}
+				else if(cont.getHumanColor().Equals ("TeamBlue"))
+				{
+					GameObject.Find(cont.getHumanColor()).GetComponent<Waypoint>().addTroopBlueD();
+				}
 				audio.PlayOneShot(spawnSound);
 				gold -= defenseCost;
 				increaseCost ();
@@ -107,7 +121,14 @@ public class GUI_MainMenuBar : MonoBehaviour
 		if(gold >= speedCost){
 	        if (GUI.Button(new Rect(450, Screen.height - 40, 70, 30), "Speed", speed))
 	        {
-				GameObject.Find("TeamRed").GetComponent<Waypoint>().addTroopRedS();
+				if(cont.getHumanColor().Equals ("TeamRed"))
+				{
+					GameObject.Find(cont.getHumanColor()).GetComponent<Waypoint>().addTroopRedS();
+				}
+				else if(cont.getHumanColor().Equals ("TeamBlue"))
+				{
+					GameObject.Find(cont.getHumanColor()).GetComponent<Waypoint>().addTroopBlueS();
+				}
 				audio.PlayOneShot(spawnSound);
 				gold -= speedCost;
 				increaseCost ();

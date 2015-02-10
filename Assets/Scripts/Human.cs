@@ -1,19 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Human : MonoBehaviour {
+public class Human : Player {
 	
 	//This is a test. Repeat. This is a test, of the Emergency Warning System
-	public Waypoint second;
-	public Waypoint first;
-	private Movement mover;
-	private float nextMove;
-	private float pause;
-	public Camera camera;
+	
+	public Camera cam;
 	// Use this for initialization
 	void Start () 
 	{
-
+		first = null;
+		second = null;
+		nextMove = Time.time;
+		pause = 0.7f;
 	}
 	
 	// Update is called once per frame
@@ -22,11 +21,11 @@ public class Human : MonoBehaviour {
 	{
 		if(Input.GetMouseButtonDown(0))
 		{
-			Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+			Ray ray = cam.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
 			if( Physics.Raycast( ray, out hit, 1000 ) && hit.transform.gameObject.CompareTag("Waypoint"))
 			{
-				if(first==null && hit.transform.gameObject.GetComponent<Waypoint>().occupiedRed)
+				if(first==null && correctColor(hit.transform.gameObject.GetComponent<Waypoint>()))
 				{
 					first = hit.transform.gameObject.GetComponent<Waypoint>();
 				}
@@ -34,7 +33,7 @@ public class Human : MonoBehaviour {
 		}
 		if(!hasSecond () && hasFirst () && Input.GetMouseButtonUp(0))
 		{
-			Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+			Ray ray = cam.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
 			if( Physics.Raycast( ray, out hit, 500 ) && hit.transform.gameObject.CompareTag("Waypoint") )
 			{
@@ -61,59 +60,16 @@ public class Human : MonoBehaviour {
 			
 		}
 	}
+
 	
-	
-	public void moveIt()
+	public void setCamerap(Camera cam)
 	{
-		if(nodesReady() && first.GetComponent<Waypoint>().hasTroop() && Time.time > nextMove && first.GetComponent<Waypoint>().occupiedRed && first.GetComponent<Waypoint>().checkRadius ())
-		{
-			moveTroop();
-			nextMove = Time.time + pause;
-		}
-		if(!first.GetComponent<Waypoint>().hasTroop ())
-		{
-			renderer.material.color = Color.white;
-		}
+		this.cam = cam;
 	}
-	
-	
-	
-	public void resetN()
+	public void PaddUnused(GameObject troop)
 	{
-		first = null;
-		second = null;
+		base.mover.addUnused (troop);
 	}
-	
-	public bool nodesReady()
-	{
-		if(hasFirst () && hasSecond ()) 
-		{return true;}
-		
-		else  
-		{return false;}
-	}
-	public void setCamerap(Camera camera)
-	{
-		this.camera = camera;
-	}
-	public void addUnused(GameObject troop)
-	{
-		mover.addUnused (troop);
-	}
-	
-	public bool hasFirst()    {return first!=null;}
-	public bool hasSecond()    {return second!=null;}
-	public Waypoint getFirst()    {return first;}
-	public Waypoint getSecond()    {return second;}
-	
-	public void moveTroop()
-	{
-		if(first.checkPCounter(second)<4)
-		{
-			first.plusPCounter(second);
-			second.plusPCounter(first);
-			mover.moveTroop (true, first, second);
-		}
-	}
+
 	
 }

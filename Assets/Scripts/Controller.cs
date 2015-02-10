@@ -22,9 +22,9 @@ public class Controller : MonoBehaviour
 	private Waypoint[] waypoints;
 	private int countW;
 	private bool inArray;
-	private Human human;
-	private FirstAI ai;
-	private Camera camera;
+	private Player red;
+	private Player blue;
+	private Camera cam;
 	private int[] Astats;
 	private int[] Dstats;
 	private int[] Sstats;
@@ -35,8 +35,12 @@ public class Controller : MonoBehaviour
 		inArray = false;
 		waypoints = new Waypoint[15];
 		countW = 0;
-		human = (Human)(this.GetComponent("Human"));
-		ai = (FirstAI)(this.GetComponent("FirstAI"));
+		red = (Human)(this.GetComponent("Human"));
+		blue = (FirstAI)(this.GetComponent("FirstAI"));
+		//ai2 = this.addComponent(FirstAI);
+		red.setMover ("TeamRed");
+		blue.setMover ("TeamBlue");
+
 		/********** IMPORTANT ************
 		 * 
 		  The first 3 values in this six long (0,1,2) array are values for RED
@@ -117,26 +121,45 @@ public class Controller : MonoBehaviour
 	{
 		return waypoints;
 	}
-	public void setCamera(Camera camera)
+	public void setCamera(Camera cam)
 	{
-		this.camera = camera;
-		human.setCamerap (this.camera);
+		this.cam = cam;
+		if(red is Human)
+		{
+			((Human)red).setCamerap (this.cam);
+		}
+		else if(blue is Human)
+		{
+			((Human)blue).setCamerap (this.cam);
+		}
 	}
 	//Player methods
-	public void resetPlayer()    {human.resetN();}
-	public void PAddUnused(GameObject troop)    {human.addUnused (troop);}
-	public bool PHasFirst()    {return human.hasFirst();}
-	public bool PHasSecond()     {return human.hasSecond();}
-	public Waypoint PGetFirst()    {return human.getFirst();}
-	public Waypoint PGetSecond()   {return human.getSecond();}
+	public void resetPlayer()    {red.resetN();}
+	public void RAddUnused(GameObject troop)    {red.addUnused (troop);}
+	public bool RHasFirst()    {return red.hasFirst();}
+	public bool RHasSecond()     {return red.hasSecond();}
+	public Waypoint RGetFirst()    {return red.getFirst();}
+	public Waypoint RGetSecond()   {return red.getSecond();}
 	public void setRecent(char s)	{recent = s;}
 	public char getRecent()	{return recent;}
+	public string getHumanColor() 
+	{
+		if(red is Human)
+		{
+			return ((Human)red).getMover ();
+		}
+		else if(blue is Human)
+		{
+			return ((Human)blue).getMover ();
+		}
+		return "";
+	}
 	//AI methods
-	public void AIAddUnused(GameObject troop)    {ai.addUnused (troop);}
-	public bool AIHasFirst()    {return ai.hasFirst();}
-	public bool AIHasSecond()     {return ai.hasSecond();}
-	public Waypoint AIGetFirst()    {return ai.getFirst();}
-	public Waypoint AIGetSecond()   {return ai.getSecond();}
+	public void BAddUnused(GameObject troop)    {blue.addUnused (troop);}
+	public bool BHasFirst()    {return blue.hasFirst();}
+	public bool BHasSecond()     {return blue.hasSecond();}
+	public Waypoint BGetFirst()    {return blue.getFirst();}
+	public Waypoint BGetSecond()   {return blue.getSecond();}
 	
 	
 	/********** IMPORTANT ************
