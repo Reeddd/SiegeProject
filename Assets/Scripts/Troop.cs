@@ -152,8 +152,16 @@ public abstract class Troop : MonoBehaviour
 	public void deactivate()
 	{
 		//turn invisible
+		this.gameObject.SetActive (false);
 		renderer.enabled = false;
 		collider.enabled = false;
+	}
+
+	public void reactivate()
+	{
+		renderer.enabled = true;
+		collider.enabled = true;
+		this.gameObject.SetActive (true);
 	}
 
 	public void startM(bool red)
@@ -170,9 +178,8 @@ public abstract class Troop : MonoBehaviour
 		{
 				first = cont.RGetFirst();
 				second = cont.RGetSecond();
-				collider.enabled = true;
-				renderer.enabled = true;
-				renderer.material.SetColor("_Color", Color.red);
+				reactivate();
+				//renderer.material.SetColor("_Color", Color.red);
 				color = "red";
 				startMove = true;
 		}
@@ -180,9 +187,8 @@ public abstract class Troop : MonoBehaviour
 		{
 				first = cont.BGetFirst();
 				second = cont.BGetSecond();
-				collider.enabled = true;
-				renderer.enabled = true;
-				renderer.material.SetColor("_Color", Color.blue);
+				reactivate ();
+				//renderer.material.SetColor("_Color", Color.blue);
 				color = "blue";
 				startMove = true;
 		}
