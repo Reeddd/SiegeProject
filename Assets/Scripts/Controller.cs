@@ -29,17 +29,26 @@ public class Controller : MonoBehaviour
 	private int[] Dstats;
 	private int[] Sstats;
 	public char recent;
+	GameObject tester;
 
 	void Start () 
 	{
 		inArray = false;
 		waypoints = new Waypoint[15];
 		countW = 0;
-		red = (Human)(this.GetComponent("Human"));
+		if (GameObject.Find ("Tester") != null) 
+		{
+			GameObject tester = GameObject.Find ("Tester");
+			red = (FirstAI)(tester.GetComponent ("FirstAI"));
+		}
+		else
+		{
+			red = (FirstAI)(this.GetComponent ("Human"));
+		}
 		blue = (FirstAI)(this.GetComponent("FirstAI"));
 		//ai2 = this.addComponent(FirstAI);
-		blue.setMover ("TeamRed");
-		red.setMover ("TeamBlue");
+		red.setMover ("TeamRed");
+		blue.setMover ("TeamBlue");
 
 		/********** IMPORTANT ************
 		 * 
