@@ -168,29 +168,23 @@ public abstract class Troop : MonoBehaviour
 		//This figures out which node the troop should be moving to or from and then makes it visible and starts it moving
 		if(red)
 		{
-			if(cont.PHasFirst() && cont.PHasSecond())
-			{
-				first = cont.PGetFirst();
-				second = cont.PGetSecond();
+				first = cont.RGetFirst();
+				second = cont.RGetSecond();
 				collider.enabled = true;
 				renderer.enabled = true;
 				renderer.material.SetColor("_Color", Color.red);
 				color = "red";
 				startMove = true;
-			}
 		}
 		else
 		{
-			if(cont.AIHasFirst() && cont.AIHasSecond())
-			{
-				first = cont.AIGetFirst();
-				second = cont.AIGetSecond();
+				first = cont.BGetFirst();
+				second = cont.BGetSecond();
 				collider.enabled = true;
 				renderer.enabled = true;
 				renderer.material.SetColor("_Color", Color.blue);
 				color = "blue";
 				startMove = true;
-			}
 		}
 	}
 	
@@ -263,7 +257,7 @@ public abstract class Troop : MonoBehaviour
 						setHealth (cont.getRedStatsD()[0]);
 					}
 					second.GetComponent<Waypoint>().turnRed();							
-					cont.PAddUnused(this.gameObject);	//Put the object in the unused array
+					cont.RAddUnused(this.gameObject);	//Put the object in the unused array
 				}
 				else if(color.Equals("blue"))
 				{
@@ -283,7 +277,7 @@ public abstract class Troop : MonoBehaviour
 						setHealth (cont.getBlueStatsD()[0]);
 					}
 					second.GetComponent<Waypoint>().turnBlue();							
-					cont.AIAddUnused(this.gameObject);
+					cont.BAddUnused(this.gameObject);
 				}
 			}
 		}	

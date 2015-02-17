@@ -1,91 +1,47 @@
 using UnityEngine;
 using System.Collections;
 
-public class Player : MonoBehaviour {
+public abstract class Player : MonoBehaviour {
 
 	//This is a test. Repeat. This is a test, of the Emergency Warning System
-	public Waypoint second;
-	public Waypoint first;
-	private Movement mover;
-	private Controller cont;
-	private float nextMove;
-	private float pause;
-	private Troop troop;
-	public string color;
-	public Camera camera;
+	protected Movement mover;
+	protected string color;
+	protected Waypoint second;
+	protected Waypoint first;
+	protected float nextMove;
+	protected float pause;
 	// Use this for initialization
 	void Start () 
 	{
-		first = null;
-		second = null;
-		mover = (Movement)GameObject.Find ("TeamRed").GetComponent("Movement");
-		cont = (Controller)GameObject.Find ("Control").GetComponent ("Controller");
-		nextMove = 0.0f;
-		pause = .6f;
+
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	//Gets the first and second nodes for movement
 	{
-		if(Input.GetMouseButtonDown(0))
-		{
-			Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-			RaycastHit hit;
-			if( Physics.Raycast( ray, out hit, 1000 ) && hit.transform.gameObject.CompareTag("Waypoint"))
-      	 	{
-           		if(first==null && hit.transform.gameObject.GetComponent<Waypoint>().occupiedRed)
-				{
-					first = hit.transform.gameObject.GetComponent<Waypoint>();
-				}
-			}
-		}
-		if(!hasSecond () && hasFirst () && Input.GetMouseButtonUp(0))
-		{
-			Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-			RaycastHit hit;
-			if( Physics.Raycast( ray, out hit, 500 ) && hit.transform.gameObject.CompareTag("Waypoint") )
-      	 	{
-           		Waypoint[] temp = first.GetComponent<Waypoint>().getArray();
-				foreach(Waypoint w in temp)
-				{
-					if(w == hit.transform.gameObject.GetComponent <Waypoint>())	
-					{
-						second = hit.transform.gameObject.GetComponent<Waypoint>();
-						//GameObject.Find("Main Camera").GetComponent<ButtonDone>().enabled = true;
-						moveIt();
-						first = null;
-						second = null;
-					}
-				}
-				first=null;
-				second=null;
-			}
-			else
-			{
-				first=null;
-				second=null;
-			}
-			
-		}
+
   	}
-	
+
+	public void resetTimer()
+	{
+		nextMove = Time.time + pause;
+	}
 
 	public void moveIt()
+	{
+		if(nodesReady() && first.GetComponent<Waypoint>().hasTroop() && Time.time > nextMove && correctColor(first.GetComponent<Waypoint>()) && first.GetComponent<Waypoint>().checkRadius ())
 		{
-		if(nodesReady() && first.GetComponent<Waypoint>().hasTroop() && Time.time > nextMove && first.GetComponent<Waypoint>().occupiedRed && first.GetComponent<Waypoint>().checkRadius ())
-			{
-				moveTroop();
-				nextMove = Time.time + pause;
-			}
-			if(!first.GetComponent<Waypoint>().hasTroop ())
-			{
-				renderer.material.color = Color.white;
-			}
+			moveTroop();
+			nextMove = Time.time + pause;
 		}
-
-
+		if(!first.GetComponent<Waypoint>().hasTroop ())
+		{
+			renderer.material.color = Color.white;
+		}
+	}
 	
+
 	public void resetN()
 	{
 		first = null;
@@ -100,15 +56,12 @@ public class Player : MonoBehaviour {
 		else  
 		{return false;}
 	}
-	public void setCamerap(Camera camera)
-	{
-		this.camera = camera;
-	}
+
 	public void addUnused(GameObject troop)
 	{
 		mover.addUnused (troop);
 	}
-	
+
 	public bool hasFirst()    {return first!=null;}
 	public bool hasSecond()    {return second!=null;}
 	public Waypoint getFirst()    {return first;}
@@ -116,12 +69,44 @@ public class Player : MonoBehaviour {
 	
 	public void moveTroop()
 	{
-		if(first.checkPCounter(second)<4)
+		if(first.checkPCounter(second)<4 && mover!=null)
 		{
 			first.plusPCounter(second);
 			second.plusPCounter(first);
-			mover.moveTroop (true, first, second);
+			mover.moveTroop (moveHelp (), first, second);
 		}
+
 	}
-	
+	public void setMover(string teamColor)
+	{
+		mover = (Movement)(GameObject.Find (teamColor).GetComponent("Movement"));
+		if (mover.gameObject.name.Equals ("TeamRed"))
+			color = "Red";
+		else if (mover.gameObject.name.Equals ("TeamBlue"))
+			color = "Blue";
+
+	}
+
+	protected bool correctColor(Waypoint wayp)
+	{
+		if(wayp.occupiedRed && color.Equals ("Red"))
+			return true;
+		else if(wayp.occupiedBlue && color.Equals ("Blue"))
+			return true;
+		else
+			return false;
+	}
+
+	protected bool moveHelp()
+	{
+		if(color.Equals("Red")){return true;}
+		else if(color.Equals("Blue")){return false;}
+		else {return false;}
+	}
+
+	public string getMover()
+	{
+		return mover.gameObject.name;
+	}
+
 }

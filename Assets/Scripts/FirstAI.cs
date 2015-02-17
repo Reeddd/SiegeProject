@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System;
 
-public class FirstAI : MonoBehaviour {
+public class FirstAI : Player {
 
 	public class Priority : IComparable 
 	{
@@ -21,90 +21,109 @@ public class FirstAI : MonoBehaviour {
 			return this.priority.CompareTo (that.priority);
 		}
 	}
-
-	GameObject control;
+	//controller object
 	Controller cont;
-	public Waypoint second;
-	public Waypoint first;
-	private float timer;
-	private float pause;
-	private GameObject currTroop;
+	//Array of waypoints known to be blue (set by findBlues())
 	public Waypoint[] blues;
+	//An arraylist that holds subclasses that keep track of a nodes priority (level two uses this)
 	public ArrayList priorities;
+	//number of blue nodes controlled
 	public int bCount;
-	private Movement mover;
+	//how much money you have to buy troops
 	private int gold;
-	public Troop troop;
+	//Cost of a speed troop
 	private int speedCost;
-	private Waypoint blue;
+	//placeholder?
+	private Waypoint homeBase;
 	public bool runOnce;
+	//boolean to see if the priority of nodes have changed
 	public bool priorityChanged;
 
 	void Start ()
 	{
+		//This finds the controller object which holds information about the game, statistics for troops, and the human and AI classes
 		if(GameObject.Find ("Control")!=null)
 		{
-			control = GameObject.Find("Control");	
+			GameObject control = GameObject.Find("Control");
 			cont = (Controller)(control.GetComponent("Controller"));
 		}
+		//Initial values
 		first = null;
 		second = null;
-		timer = 5f;
+		nextMove = 5f;
 		pause = 2.3f;
-		mover = (Movement)GameObject.Find ("TeamBlue").GetComponent("Movement");
+		mover = null;
 		blues = new Waypoint[15];
 		bCount=0;
 		gold = 0;
 		speedCost = 25;
+		//Repeats the method GimmeMoney which increments the gold variable
 		InvokeRepeating("GimmeMoney", 1.5f, 0.2f);
-		if(GameObject.Find ("TeamBlue")!=null)
-		{	
-			blue = (Waypoint)(GameObject.Find("TeamBlue").GetComponent("Waypoint"));
-		}
+		homeBase = null;
 		runOnce = true;
 		priorityChanged = true;
 	}
 	
 	void Update ()
 	{
+		//only runs once to get the priorities once everything is initialized
 		if (runOnce)
 		{
 			findPriorities();
 			runOnce = false;
 		}
-		if(Time.time > timer)	
+		//If the current time is greater than the nextMove value (set to Time.time + added time)
+		if(Time.time > nextMove)	
 		{
+			//Find all waypoints that are blue
 			findBlues();
+			//Picks the closest blue and moves to it
 			levelOne();
+			//Picks a blue waypoint to move to based on the priority struct
 			levelTwo();
+			//Defends a waypoint that's being attacked
 			levelThree();
+
 			if(first!=null && second!=null && first.hasTroop ())
 			{	
 				if(first.checkPCounter(second)<=4)
 				{
-					mover.moveTroop (false, first, second);
+					//uses the mover class to move a troop from first to second
+					mover.moveTroop (moveHelp(), first, second);
+					//Increments the path counter for both waypoints (how many troops are on a path between waypoints)
 					first.plusPCounter(second);
 					second.plusPCounter (first);
 					//first.subtractS();
+					//If the waypoint has no more troops, it becomes gray (neutral)
 					first.checkIt ();
 				}
 			}
 			reset();
-			timer = Time.time + pause;
+			nextMove = Time.time + pause;
 		}
 		if(gold > speedCost)
 		{	
-			if(GameObject.Find ("TeamBlue")!=null)
-			{	
-				blue = (Waypoint)(GameObject.Find("TeamBlue").GetComponent("Waypoint"));
-				blue.addTroopBlueS ();
-				gold-=speedCost;
-				speedCost = speedCost+1;
+			if(base.mover.gameObject.name.Equals ("TeamRed"))
+			{
+				if(GameObject.Find ("TeamRed")!=null)
+			    {	
+					homeBase = (Waypoint)(GameObject.Find("TeamRed").GetComponent("Waypoint"));
+					homeBase.addTroopRedS ();
+					gold-=speedCost;
+					speedCost = speedCost+1;
+				}
+			}
+			else if(base.mover.gameObject.name.Equals ("TeamBlue"))
+			{
+				if(GameObject.Find ("TeamBlue")!=null)
+				{	
+					homeBase = (Waypoint)(GameObject.Find("TeamBlue").GetComponent("Waypoint"));
+					homeBase.addTroopBlueS ();
+					gold-=speedCost;
+					speedCost = speedCost+1;
+				}
 			}
 		}
-			
-		//if(startMove)
-			//letsGo (currTroop);
 		
 	}
 	
@@ -119,7 +138,7 @@ public class FirstAI : MonoBehaviour {
 				{
 					if(l != null)
 					{
-						if(!l.occupiedBlue)
+						if(!correctColor (l))
 						{
 							first = way;
 							second = l;
@@ -140,12 +159,13 @@ public class FirstAI : MonoBehaviour {
 		{
 			priorities.Sort();
 			priorities.Reverse();
+			priorityChanged = false;
 		}
 		foreach (Priority pri in priorities)
 		{
 			foreach(Waypoint wayp in pri.wayp.getArray ())
 			{
-				if(wayp.occupiedBlue)
+				if(correctColor(wayp))
 				{
 					first = wayp;
 					second = pri.wayp;
@@ -172,26 +192,6 @@ public class FirstAI : MonoBehaviour {
 		}
 	}
 
-
-
-	public void addUnused(GameObject troop)
-	{
-		mover.addUnused (troop);
-	}
-	
-	public bool hasFirst()
-	{
-		return first!=null;
-	}
-	
-	public bool hasSecond()
-	{
-		return second!=null;
-	}
-	
-	public Waypoint getFirst()    {return first;}
-	public Waypoint getSecond()    {return second;}
-	
 	public void findBlues()
 	{
 		Waypoint[] temp = new Waypoint[20];
@@ -200,7 +200,7 @@ public class FirstAI : MonoBehaviour {
 		{
 			if(n!=null)
 			{
-				if(((Waypoint) n).occupiedBlue)
+				if(correctColor(((Waypoint) n)))
 				{
 					temp[i] = (Waypoint) n;
 					i++;
@@ -210,7 +210,7 @@ public class FirstAI : MonoBehaviour {
 		blues = temp;
 		bCount = i;
 	}
-	
+
 	public void GimmeMoney()
 	{
 		gold++;
@@ -229,7 +229,7 @@ public class FirstAI : MonoBehaviour {
 		foreach (Waypoint w in cont.getPoints())
 		{
 			if(w == null){}
-			else if(w.gameObject.name == "TeamBlue")
+			else if(w.gameObject.name.Equals ( base.mover.gameObject.name))
 			{
 				root = w;
 				break;
@@ -270,6 +270,5 @@ public class FirstAI : MonoBehaviour {
 				}
 			}
 		}
-
 	}
 }
