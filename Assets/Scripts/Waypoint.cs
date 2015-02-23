@@ -106,6 +106,10 @@ public class Waypoint : MonoBehaviour
 		{
 			renderer.material.color = Color.red;
 		}
+		else if(this.gameObject.name.Equals("TeamBlue"))
+		{
+			//end game
+		}
 		occupiedRed = true;
 		occupiedBlue = false;
 	}
