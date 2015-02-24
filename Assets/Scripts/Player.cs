@@ -37,7 +37,7 @@ public abstract class Player : MonoBehaviour {
 		}
 		if(!first.GetComponent<Waypoint>().hasTroop ())
 		{
-			renderer.material.color = Color.white;
+			first.renderer.material.color = Color.white;
 		}
 	}
 	
