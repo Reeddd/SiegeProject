@@ -108,7 +108,7 @@ public class Waypoint : MonoBehaviour
 		}
 		else if(this.gameObject.name.Equals("TeamBlue"))
 		{
-			//end game
+			cont.redWins();
 		}
 		occupiedRed = true;
 		occupiedBlue = false;

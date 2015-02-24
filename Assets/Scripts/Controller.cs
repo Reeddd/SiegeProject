@@ -38,17 +38,21 @@ public class Controller : MonoBehaviour
 		countW = 0;
 		if (GameObject.Find ("Tester") != null) 
 		{
-			GameObject tester = GameObject.Find ("Tester");
+			tester = GameObject.Find ("Tester");
 			red = (FirstAI)(tester.GetComponent ("FirstAI"));
 		}
 		else
 		{
-			red = (FirstAI)(this.GetComponent ("Human"));
+			red = (Human)(this.GetComponent ("Human"));
 		}
-		blue = (FirstAI)(this.GetComponent("FirstAI"));
+		red = (Human)(tester.GetComponent ("Human"));
+		blue = (FirstAI)(tester.GetComponent("FirstAI"));
+		blue = null;
 		//ai2 = this.addComponent(FirstAI);
-		red.setMover ("TeamRed");
-		blue.setMover ("TeamBlue");
+		if(red!=null)
+			red.setMover ("TeamRed");
+		if(blue!=null)
+			blue.setMover ("TeamBlue");
 
 		/********** IMPORTANT ************
 		 * 
@@ -251,6 +255,11 @@ public class Controller : MonoBehaviour
 	{
 		int[] temp = {Sstats[3], Sstats[4], Sstats[5]};
 		return temp;
+	}
+
+	public void redWins()
+	{
+		cam.GetComponent<GUI_VictoryMenu> ().enabled = true;
 	}
 	
 }
