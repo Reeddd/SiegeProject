@@ -228,11 +228,13 @@ public class FirstAI : Player {
 		Waypoint root = null;
 		foreach (Waypoint w in cont.getPoints())
 		{
-			if(w == null){}
-			else if(w.gameObject.name.Equals ( base.mover.gameObject.name))
+			if(w!=null && base.mover != null)
 			{
-				root = w;
-				break;
+				if(w.gameObject.name.Equals ( base.mover.gameObject.name))
+				{
+					root = w;
+					break;
+				}
 			}
 		}
 		int prior = 1;
@@ -246,27 +248,29 @@ public class FirstAI : Player {
 		while (toGo.Count != 0)
 		{
 			root = (Waypoint)toGo.Dequeue();
-			foreach(Waypoint w in root.getArray ())
+			if(root != null)
 			{
-				go = true;
-				foreach(Priority pr in priorities)
+				foreach(Waypoint w in root.getArray ())
 				{
-					if(pr.wayp == root)
-						prior = pr.priority+1;
-					if(pr.wayp == w)
+					go = true;
+					foreach(Priority pr in priorities)
 					{
-						go = false;
-						break;
+						if(pr.wayp == root)
+							prior = pr.priority+1;
+						if(pr.wayp == w)
+						{
+							go = false;
+							break;
+						}
 					}
-				}
-				if(go)
-				{
-
-					toGo.Enqueue(w);
-					Priority newP = new Priority();
-					newP.priority = prior;
-					newP.wayp = w;
-					priorities.Add(newP);
+					if(go)
+					{
+						toGo.Enqueue(w);
+						Priority newP = new Priority();
+						newP.priority = prior;
+						newP.wayp = w;
+						priorities.Add(newP);
+					}
 				}
 			}
 		}
