@@ -152,8 +152,16 @@ public abstract class Troop : MonoBehaviour
 	public void deactivate()
 	{
 		//turn invisible
+		this.gameObject.SetActive (false);
 		renderer.enabled = false;
 		collider.enabled = false;
+	}
+
+	public void reactivate()
+	{
+		renderer.enabled = true;
+		collider.enabled = true;
+		this.gameObject.SetActive (true);
 	}
 
 	public void startM(bool red)
@@ -168,29 +176,21 @@ public abstract class Troop : MonoBehaviour
 		//This figures out which node the troop should be moving to or from and then makes it visible and starts it moving
 		if(red)
 		{
-			if(cont.PHasFirst() && cont.PHasSecond())
-			{
-				first = cont.PGetFirst();
-				second = cont.PGetSecond();
-				collider.enabled = true;
-				renderer.enabled = true;
-				renderer.material.SetColor("_Color", Color.red);
+				first = cont.RGetFirst();
+				second = cont.RGetSecond();
+				reactivate();
+				//renderer.material.SetColor("_Color", Color.red);
 				color = "red";
 				startMove = true;
-			}
 		}
 		else
 		{
-			if(cont.AIHasFirst() && cont.AIHasSecond())
-			{
-				first = cont.AIGetFirst();
-				second = cont.AIGetSecond();
-				collider.enabled = true;
-				renderer.enabled = true;
-				renderer.material.SetColor("_Color", Color.blue);
+				first = cont.BGetFirst();
+				second = cont.BGetSecond();
+				reactivate ();
+				//renderer.material.SetColor("_Color", Color.blue);
 				color = "blue";
 				startMove = true;
-			}
 		}
 	}
 	
@@ -263,7 +263,7 @@ public abstract class Troop : MonoBehaviour
 						setHealth (cont.getRedStatsD()[0]);
 					}
 					second.GetComponent<Waypoint>().turnRed();							
-					cont.PAddUnused(this.gameObject);	//Put the object in the unused array
+					cont.RAddUnused(this.gameObject);	//Put the object in the unused array
 				}
 				else if(color.Equals("blue"))
 				{
@@ -283,7 +283,7 @@ public abstract class Troop : MonoBehaviour
 						setHealth (cont.getBlueStatsD()[0]);
 					}
 					second.GetComponent<Waypoint>().turnBlue();							
-					cont.AIAddUnused(this.gameObject);
+					cont.BAddUnused(this.gameObject);
 				}
 			}
 		}	
