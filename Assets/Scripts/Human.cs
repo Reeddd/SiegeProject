@@ -23,7 +23,7 @@ public class Human : Player {
 		{
 			Ray ray = cam.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
-			if( Physics.Raycast( ray, out hit, 1000 ) && hit.transform.gameObject.CompareTag("Waypoint"))
+			if( Physics.Raycast( ray, out hit, 5000 ) && hit.transform.gameObject.CompareTag("Waypoint"))
 			{
 				if(first==null && correctColor(hit.transform.gameObject.GetComponent<Waypoint>()))
 				{

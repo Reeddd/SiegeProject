@@ -45,9 +45,8 @@ public class Controller : MonoBehaviour
 		{
 			red = (Human)(this.GetComponent ("Human"));
 		}
-		red = (Human)(tester.GetComponent ("Human"));
-		blue = (FirstAI)(tester.GetComponent("FirstAI"));
-		blue = null;
+		//red = (Human)(tester.GetComponent ("Human"));
+		blue = (FirstAI)(this.GetComponent("FirstAI"));
 		//ai2 = this.addComponent(FirstAI);
 		if(red!=null)
 			red.setMover ("TeamRed");
@@ -63,8 +62,8 @@ public class Controller : MonoBehaviour
 		 *
 		 */
 		int [] a = {300, 100, 14, 300, 100, 14};
-		int [] d = {450, 70, 14, 450, 70, 14};
-		int [] s = {300, 70, 20, 300, 70, 20};
+		int [] d = {650, 30, 14, 650, 30, 14};
+		int [] s = {300, 70, 50, 300, 70, 50};
 		Astats = a;
 		Dstats = d;
 		Sstats = s;
