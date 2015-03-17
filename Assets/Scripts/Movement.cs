@@ -146,8 +146,8 @@ public class Movement : MonoBehaviour {
 		Vector3 between = second.collider.bounds.center - first.collider.bounds.center;
 		float angle = Mathf.Atan(between.x/between.z);
 		Vector3 dirRadius = new Vector3();
-		dirRadius.z = Mathf.Cos(angle) * 4;
-		dirRadius.x = Mathf.Sin(angle) * 4;
+		dirRadius.z = Mathf.Cos(angle) * 4.2f;
+		dirRadius.x = Mathf.Sin(angle) * 4.2f;
 		if(between.z < 0)
 		{	
 			dirRadius = dirRadius * -1;

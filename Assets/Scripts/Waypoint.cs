@@ -338,7 +338,7 @@ public class Waypoint : MonoBehaviour
 
 	public bool checkRadius()
 	{
-		Collider[] inSphere = Physics.OverlapSphere(this.collider.bounds.center, 4.2f);
+		Collider[] inSphere = Physics.OverlapSphere(this.collider.bounds.center, 12.5f);
 		foreach (Collider cw in inSphere)
 		{
 			if(cw.gameObject.CompareTag("Troop"))
