@@ -79,9 +79,9 @@ public class FirstAI : Player {
 			//Picks the closest blue and moves to it
 			levelOne();
 			//Picks a blue waypoint to move to based on the priority struct
-			//levelTwo();
+			levelTwo();
 			//Defends a waypoint that's being attacked
-			//levelThree();
+			levelThree();
 
 			if(first!=null && second!=null && first.hasTroop ())
 			{	
@@ -89,6 +89,7 @@ public class FirstAI : Player {
 				{
 					//uses the mover class to move a troop from first to second
 					mover.moveTroop (moveHelp(), first, second);
+					//moveIt ();
 					//Increments the path counter for both waypoints (how many troops are on a path between waypoints)
 					first.plusPCounter(second);
 					second.plusPCounter (first);
@@ -225,7 +226,7 @@ public class FirstAI : Player {
 	{
 		priorities = new ArrayList();
 		Waypoint root = null;
-		Movement thisMover = (Movement)(GameObject.Find (base.getMover ()).GetComponent("Movement"));
+		Movement thisMover = (Movement)(GameObject.Find (getMover ()).GetComponent("Movement"));
 		foreach (Waypoint w in cont.getPoints())
 		{
 			if(w != null)
