@@ -52,7 +52,6 @@ public class FirstAI : Player {
 		second = null;
 		nextMove = 5f;
 		pause = 2.3f;
-		mover = null;
 		blues = new Waypoint[15];
 		bCount=0;
 		gold = 0;
@@ -80,9 +79,9 @@ public class FirstAI : Player {
 			//Picks the closest blue and moves to it
 			levelOne();
 			//Picks a blue waypoint to move to based on the priority struct
-			levelTwo();
+			//levelTwo();
 			//Defends a waypoint that's being attacked
-			levelThree();
+			//levelThree();
 
 			if(first!=null && second!=null && first.hasTroop ())
 			{	
@@ -226,13 +225,16 @@ public class FirstAI : Player {
 	{
 		priorities = new ArrayList();
 		Waypoint root = null;
+		Movement thisMover = (Movement)(GameObject.Find (base.getMover ()).GetComponent("Movement"));
 		foreach (Waypoint w in cont.getPoints())
 		{
-			if(w == null){}
-			else if(w.gameObject.name.Equals ( base.mover.gameObject.name))
+			if(w != null)
 			{
-				root = w;
-				break;
+				if(w.gameObject.name.Equals ( thisMover.gameObject.name))
+				{
+					root = w;
+					break;
+				}
 			}
 		}
 		int prior = 1;
