@@ -24,6 +24,7 @@ public class Waypoint : MonoBehaviour
 	public int AtroopCount;
 	public int DtroopCount;
 	public int StroopCount;
+	private Queue troopQ;
 	public bool occupiedBlue;
 	public bool occupiedRed;
 	public int health;
@@ -43,6 +44,7 @@ public class Waypoint : MonoBehaviour
 		AtroopCount = 0;
 		DtroopCount = 0;
 		StroopCount = 0;
+		troopQ = new Queue ();
 		waypoints = new ArrayList();
 		pathCounts = new int[4];
 		paths = new GameObject[4];
@@ -127,29 +129,29 @@ public class Waypoint : MonoBehaviour
 	/*The Red Troops*/
 	public void addTroopRedA()
 	{
-		AtroopCount++; turnRed (); occupiedRed=true; recountHealth (); cont.setRecent('A'); 
+		AtroopCount++; turnRed (); occupiedRed=true; recountHealth (); cont.setRecent('A'); troopQ.Enqueue ("A");
 	}
 	public void addTroopRedD()
 	{
-		DtroopCount++; turnRed (); occupiedRed=true; recountHealth (); cont.setRecent('D'); 
+		DtroopCount++; turnRed (); occupiedRed=true; recountHealth (); cont.setRecent('D'); troopQ.Enqueue ("D");
 	}
 	public void addTroopRedS()
 	{
-		StroopCount++; turnRed (); occupiedRed=true; recountHealth (); cont.setRecent('S');
+		StroopCount++; turnRed (); occupiedRed=true; recountHealth (); cont.setRecent('S'); troopQ.Enqueue ("S");
 	}
 	
 	/*The blue troops*/
 	public void addTroopBlueA()
 	{
-		AtroopCount++; occupiedBlue=true; turnBlue (); recountHealth ();
+		AtroopCount++; occupiedBlue=true; turnBlue (); recountHealth (); troopQ.Enqueue ("A");
 	}
 	public void addTroopBlueD()
 	{
-		DtroopCount++; occupiedBlue=true; turnBlue (); recountHealth ();
+		DtroopCount++; occupiedBlue=true; turnBlue (); recountHealth (); troopQ.Enqueue ("D");
 	}
 	public void addTroopBlueS()
 	{
-		StroopCount++; occupiedBlue=true; turnBlue (); recountHealth();
+		StroopCount++; occupiedBlue=true; turnBlue (); recountHealth(); troopQ.Enqueue ("S");
 	}
 	
 	public void subtractA()
@@ -157,20 +159,28 @@ public class Waypoint : MonoBehaviour
 		AtroopCount--;
 		recountHealth();
 		checkIt ();
+		troopQ.Dequeue ();
 	}
 	public void subtractD()
 	{
 		DtroopCount--;
 		recountHealth();
 		checkIt ();
+		troopQ.Dequeue ();
 	}
 	public void subtractS()
 	{
 		StroopCount--;
 		recountHealth ();
 		checkIt ();
+		troopQ.Dequeue ();
 	}
-	
+
+	public string nextInLine()
+	{
+		return troopQ.Peek ().ToString();
+	}
+
 	public void checkIt()
 	{
 		if(!hasTroop ())
@@ -338,7 +348,7 @@ public class Waypoint : MonoBehaviour
 
 	public bool checkRadius()
 	{
-		Collider[] inSphere = Physics.OverlapSphere(this.collider.bounds.center, 12.5f);
+		Collider[] inSphere = Physics.OverlapSphere(this.collider.bounds.center, this.gameObject.renderer.bounds.size[0]*0.75f);
 		foreach (Collider cw in inSphere)
 		{
 			if(cw.gameObject.CompareTag("Troop"))

@@ -36,16 +36,16 @@ public class Controller : MonoBehaviour
 		inArray = false;
 		waypoints = new Waypoint[15];
 		countW = 0;
+		tester = GameObject.Find ("Tester");
 		if (GameObject.Find ("Tester") != null) 
 		{
-			tester = GameObject.Find ("Tester");
-			red = (FirstAI)(tester.GetComponent ("FirstAI"));
+			//red = (FirstAI)(tester.GetComponent ("FirstAI"));
 		}
 		else
 		{
-			red = (Human)(this.GetComponent ("Human"));
+			//red = (Human)(this.GetComponent ("Human"));
 		}
-		//red = (Human)(tester.GetComponent ("Human"));
+		red = (Human)(tester.GetComponent ("Human"));
 		blue = (FirstAI)(this.GetComponent("FirstAI"));
 		//ai2 = this.addComponent(FirstAI);
 		if(red!=null)
@@ -61,9 +61,9 @@ public class Controller : MonoBehaviour
 		  Same order, 3 = health, 4 = attack, 5 = speed
 		 *
 		 */
-		int [] a = {300, 100, 14, 300, 100, 14};
-		int [] d = {650, 30, 14, 650, 30, 14};
-		int [] s = {300, 70, 50, 300, 70, 50};
+		int [] a = {300, 100, 22, 300, 100, 22};
+		int [] d = {660, 30, 16, 660, 30, 16};
+		int [] s = {300, 60, 50, 300, 60, 50};
 		Astats = a;
 		Dstats = d;
 		Sstats = s;

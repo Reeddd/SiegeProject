@@ -102,7 +102,7 @@ public abstract class Troop : MonoBehaviour
 				else if(this.gameObject.GetComponent<Defense>() as Defense !=null)
 					ident = "D";
 				float dist = Vector3.Distance(second.collider.bounds.center, transform.position);
-				if(dist>13)
+				if(dist > (second.gameObject.renderer.bounds.size[0]/2)+(this.gameObject.renderer.bounds.size[0]*1.4f))
 				{		
 					//Makes the speed of movement equal the speed of movement in the stats arrays - RED
 					if(color.Equals ("red"))
@@ -238,7 +238,8 @@ public abstract class Troop : MonoBehaviour
 				else if(ident == "D")
 					transform.position= Vector3.MoveTowards(transform.position, second.collider.bounds.center, cont.getBlueStatsD()[2]*(.01f));
 			}
-			if(dist < 12.2f)		//When we get to that node
+			
+			if(dist < (second.gameObject.renderer.bounds.size[0] / 1.8f))		//When we get to that node
 			{	
 				deactivate ();
 				setAll (false, false, false);

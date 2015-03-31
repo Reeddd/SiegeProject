@@ -36,50 +36,51 @@ public class Movement : MonoBehaviour {
 		//Check to see if there are any troop game objects not being used
 			if(countU > 0)
 			{
+				string typeLetter;
+				
 				int i;
 				for(i=0; i<unused.Length-1;i++)
 				{
-					if(unused[i]==null)
-					{
-						
-					}
-					else if(red)
+					if(unused[i]!=null)
 					{
 						reuse = unused[i];
-						if((reuse.GetComponent<Speed>() as Speed !=null && first.getCountS()>0)
-						|| (reuse.GetComponent<Attack>() as Attack !=null && first.getCountA()>0)
-						|| (reuse.GetComponent<Defense>() as Defense !=null && first.getCountD()>0))
-						{	
-							reuse.transform.position = getRadPosition(first, second);
-							//reuse.transform.position = first.collider.bounds.center;
-							reuse.GetComponent<Troop>().startM(red);
-							countU--;
-							unused[i] = null;
-							if(reuse.GetComponent<Speed>() as Speed !=null)
-								first.subtractS();
-							else if(reuse.GetComponent<Attack>() as Attack !=null)
-								first.subtractA();
-							else if(reuse.GetComponent<Defense>() as Defense !=null)
-								first.subtractD ();
-							done = true;
-							break;
-						}
-					}
-					else if(!red)
-					{
-						reuse = unused[i];
-						unused[i] = null;
-						reuse.transform.position = getRadPosition (first, second);
-						reuse.GetComponent<Troop>().startM(red);
-						countU--;
 						if(reuse.GetComponent<Speed>() as Speed !=null)
-							first.subtractS();
+						{
+							typeLetter = "S";
+						}
 						else if(reuse.GetComponent<Attack>() as Attack !=null)
-							first.subtractA();
+						{	
+							typeLetter = "A";
+						}
 						else if(reuse.GetComponent<Defense>() as Defense !=null)
-							first.subtractD ();
-						done=true;
-						break;
+						{
+							typeLetter = "D";
+						}
+						else
+						{
+							typeLetter = null;
+						}
+							if((reuse.GetComponent<Speed>() as Speed !=null && first.getCountS()>0)
+							|| (reuse.GetComponent<Attack>() as Attack !=null && first.getCountA()>0)
+							|| (reuse.GetComponent<Defense>() as Defense !=null && first.getCountD()>0))
+							{	
+								if(typeLetter == first.nextInLine())
+								{
+									reuse.transform.position = getRadPosition(first, second);
+									//reuse.transform.position = first.collider.bounds.center;
+									reuse.GetComponent<Troop>().startM(red);
+									countU--;
+									unused[i] = null;
+									if(reuse.GetComponent<Speed>() as Speed !=null)
+										first.subtractS();
+									else if(reuse.GetComponent<Attack>() as Attack !=null)
+										first.subtractA();
+									else if(reuse.GetComponent<Defense>() as Defense !=null)
+										first.subtractD ();
+									done = true;
+									break;
+								}
+							}
 					}
 				}
 
@@ -146,15 +147,16 @@ public class Movement : MonoBehaviour {
 		Vector3 between = second.collider.bounds.center - first.collider.bounds.center;
 		float angle = Mathf.Atan(between.x/between.z);
 		Vector3 dirRadius = new Vector3();
-		dirRadius.z = Mathf.Cos(angle) * 4.2f;
-		dirRadius.x = Mathf.Sin(angle) * 4.2f;
+		dirRadius.z = Mathf.Cos(angle) * (first.gameObject.renderer.bounds.size[0]/2.2f);
+		dirRadius.x = Mathf.Sin(angle) * (first.gameObject.renderer.bounds.size[0]/2.2f);
 		if(between.z < 0)
 		{	
 			dirRadius = dirRadius * -1;
 		}
 		return first.collider.bounds.center + dirRadius;
 	}
-	
+
+
 	public void addUnused(GameObject troop)
 	{
 		bool done = false;
