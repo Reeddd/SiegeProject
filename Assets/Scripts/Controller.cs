@@ -39,15 +39,14 @@ public class Controller : MonoBehaviour
 		tester = GameObject.Find ("Tester");
 		if (GameObject.Find ("Tester") != null) 
 		{
-			tester = GameObject.Find ("Tester");
-			red = (FirstAI)(tester.GetComponent ("FirstAI"));
+			//red = (FirstAI)(tester.GetComponent ("FirstAI"));
 		}
 		else
 		{
-			red = (Human)(this.GetComponent ("Human"));
+			//red = (Human)(this.GetComponent ("Human"));
 		}
-		red = (Human)(tester.GetComponent ("Human"));
-		blue = (FirstAI)(tester.GetComponent("FirstAI"));
+		red = (Human)(this.GetComponent ("Human"));
+		blue = (FirstAI)(this.GetComponent("FirstAI"));
 		//ai2 = this.addComponent(FirstAI);
 		if(red!=null)
 			red.setMover ("TeamRed");
