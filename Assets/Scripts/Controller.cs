@@ -47,7 +47,6 @@ public class Controller : MonoBehaviour
 		}
 		red = (Human)(tester.GetComponent ("Human"));
 		blue = (FirstAI)(tester.GetComponent("FirstAI"));
-		blue = null;
 		//ai2 = this.addComponent(FirstAI);
 		if(red!=null)
 			red.setMover ("TeamRed");
@@ -257,8 +256,10 @@ public class Controller : MonoBehaviour
 		return temp;
 	}
 
-	public void redWins()
+	public void gameOver(string color)
 	{
+		string message = color + " Team Wins!";
+		cam.GetComponent<GUI_VictoryMenu> ().setMessage(message);
 		cam.GetComponent<GUI_VictoryMenu> ().enabled = true;
 	}
 	

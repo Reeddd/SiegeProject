@@ -108,7 +108,7 @@ public class Waypoint : MonoBehaviour
 		}
 		else if(this.gameObject.name.Equals("TeamBlue"))
 		{
-			cont.redWins();
+			cont.gameOver("Red");
 		}
 		occupiedRed = true;
 		occupiedBlue = false;
@@ -119,6 +119,10 @@ public class Waypoint : MonoBehaviour
 		if(this.gameObject.name!="TeamRed" && this.gameObject.name!="TeamBlue")
 		{
 			renderer.material.color = Color.blue;
+		}
+		else if(this.gameObject.name.Equals("TeamRed"))
+		{
+			cont.gameOver("Blue");
 		}
 		occupiedBlue = true;
 		occupiedRed = false;

@@ -163,14 +163,21 @@ public class FirstAI : Player {
 		}
 		foreach (Priority pri in priorities)
 		{
-			foreach(Waypoint wayp in pri.wayp.getArray ())
+			try
 			{
-				if(correctColor(wayp))
+				foreach(Waypoint wayp in pri.wayp.getArray ())
 				{
-					first = wayp;
-					second = pri.wayp;
-					return;
+					if(correctColor(wayp))
+					{
+						first = wayp;
+						second = pri.wayp;
+						return;
+					}
 				}
+			}
+			catch(NullReferenceException)
+			{
+				print("Priority had no wayp");
 			}
 		}
 		return;
