@@ -233,6 +233,7 @@ public class FirstAI : Player {
 	{
 		priorities = new ArrayList();
 		Waypoint root = null;
+		Movement thisMover = (Movement)(GameObject.Find (getMover ()).GetComponent("Movement"));
 		foreach (Waypoint w in cont.getPoints())
 		{
 			if(w!=null && base.mover != null)

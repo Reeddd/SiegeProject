@@ -35,7 +35,7 @@ public class GUI_MainMenuBar : MonoBehaviour
 		InvokeRepeating("GimmeMoney", 1.5f, 0.3f);
 		speedCost = 25;
 		defenseCost = 35;
-		attackCost = 50;
+		attackCost = 45;
 		GameObject.Find("Main Camera").GetComponent<GUI_UpgradeAttackBox>().enabled = false;
 		GameObject.Find("Main Camera").GetComponent<GUI_UpgradeDefenseBox>().enabled = false;
 		GameObject.Find("Main Camera").GetComponent<GUI_UpgradeSpeedBox>().enabled = false;
