@@ -52,6 +52,7 @@ public class FirstAI : Player {
 		second = null;
 		nextMove = 5f;
 		pause = 2.3f;
+		mover = null;
 		blues = new Waypoint[15];
 		bCount=0;
 		gold = 0;
@@ -89,7 +90,6 @@ public class FirstAI : Player {
 				{
 					//uses the mover class to move a troop from first to second
 					mover.moveTroop (moveHelp(), first, second);
-					//moveIt ();
 					//Increments the path counter for both waypoints (how many troops are on a path between waypoints)
 					first.plusPCounter(second);
 					second.plusPCounter (first);
@@ -163,14 +163,21 @@ public class FirstAI : Player {
 		}
 		foreach (Priority pri in priorities)
 		{
-			foreach(Waypoint wayp in pri.wayp.getArray ())
+			try
 			{
-				if(correctColor(wayp))
+				foreach(Waypoint wayp in pri.wayp.getArray ())
 				{
-					first = wayp;
-					second = pri.wayp;
-					return;
+					if(correctColor(wayp))
+					{
+						first = wayp;
+						second = pri.wayp;
+						return;
+					}
 				}
+			}
+			catch(NullReferenceException)
+			{
+				print("Priority had no wayp");
 			}
 		}
 		return;
@@ -229,9 +236,9 @@ public class FirstAI : Player {
 		Movement thisMover = (Movement)(GameObject.Find (getMover ()).GetComponent("Movement"));
 		foreach (Waypoint w in cont.getPoints())
 		{
-			if(w != null)
+			if(w!=null && base.mover != null)
 			{
-				if(w.gameObject.name.Equals ( thisMover.gameObject.name))
+				if(w.gameObject.name.Equals ( base.mover.gameObject.name))
 				{
 					root = w;
 					break;
@@ -249,27 +256,29 @@ public class FirstAI : Player {
 		while (toGo.Count != 0)
 		{
 			root = (Waypoint)toGo.Dequeue();
-			foreach(Waypoint w in root.getArray ())
+			if(root != null)
 			{
-				go = true;
-				foreach(Priority pr in priorities)
+				foreach(Waypoint w in root.getArray ())
 				{
-					if(pr.wayp == root)
-						prior = pr.priority+1;
-					if(pr.wayp == w)
+					go = true;
+					foreach(Priority pr in priorities)
 					{
-						go = false;
-						break;
+						if(pr.wayp == root)
+							prior = pr.priority+1;
+						if(pr.wayp == w)
+						{
+							go = false;
+							break;
+						}
 					}
-				}
-				if(go)
-				{
-
-					toGo.Enqueue(w);
-					Priority newP = new Priority();
-					newP.priority = prior;
-					newP.wayp = w;
-					priorities.Add(newP);
+					if(go)
+					{
+						toGo.Enqueue(w);
+						Priority newP = new Priority();
+						newP.priority = prior;
+						newP.wayp = w;
+						priorities.Add(newP);
+					}
 				}
 			}
 		}
