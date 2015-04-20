@@ -364,4 +364,22 @@ public class DecisionTreeAI : Player {
 		}
 		return false;
 	}
+
+	public override int numberBought()
+	{
+		//return speedCost - 25;
+		return 0;
+	}
+	
+	public override int numberLost()
+	{
+		/*findBlues ();
+		int stock = 0;
+		foreach(Waypoint bl in blues)
+		{
+			stock += bl.getCountTotal();
+		}
+		return numberBought() - stock;*/
+		return 0;
+	}
 }

@@ -45,7 +45,7 @@ public class Controller : MonoBehaviour
 		{
 			//red = (Human)(this.GetComponent ("Human"));
 		}
-		red = (FirstAI)(this.GetComponent ("FirstAI"));
+		red = (DecisionTreeAI)(this.GetComponent ("DecisionTreeAI"));
 		blue = (BaseAI)(tester.GetComponent("BaseAI"));
 		//ai2 = this.addComponent(FirstAI);
 		if(red!=null)

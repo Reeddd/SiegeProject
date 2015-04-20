@@ -78,7 +78,7 @@ public class TestAIs : MonoBehaviour {
 		temp = lossAI.Split (new Char[] {'('});
 		temp = temp[1].Split(new Char[] {')'});
 		string lossFinal = temp [0];
-		string toPrint = "W: " + winFinal + " L: " + lossFinal + " Time: " + (Time.time - timer) + "Winner Bought: " + winBought + "Winner Deaths: " + winDead + "Loser Bought: " + lossBought + "Loser Deaths: " + lossDead;
+		string toPrint = "W: " + winFinal + " L: " + lossFinal + " Time: " + (Time.time - timer) + " Winner Bought: " + winBought + " Winner Deaths: " + winDead + " Loser Bought: " + lossBought + " Loser Deaths: " + lossDead;
 		writeResults (toPrint);
 		Application.LoadLevel ("Map2");
 	}
