@@ -263,7 +263,7 @@ public abstract class Troop : MonoBehaviour
 						second.GetComponent<Waypoint>().addTroopRedD();
 						setHealth (cont.getRedStatsD()[0]);
 					}
-					second.GetComponent<Waypoint>().turnRed();							
+					//second.GetComponent<Waypoint>().turnRed();							
 					cont.RAddUnused(this.gameObject);	//Put the object in the unused array
 				}
 				else if(color.Equals("blue"))
@@ -283,7 +283,7 @@ public abstract class Troop : MonoBehaviour
 						second.GetComponent<Waypoint>().addTroopBlueD();
 						setHealth (cont.getBlueStatsD()[0]);
 					}
-					second.GetComponent<Waypoint>().turnBlue();							
+					//second.GetComponent<Waypoint>().turnBlue();							
 					cont.BAddUnused(this.gameObject);
 				}
 			}

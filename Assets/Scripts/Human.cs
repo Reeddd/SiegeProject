@@ -61,7 +61,16 @@ public class Human : Player {
 		}
 	}
 
-	
+	public override int numberBought()
+	{
+		return 0;
+	}
+
+	public override int numberLost()
+	{
+		return 0;
+	}
+
 	public void setCamerap(Camera cam)
 	{
 		this.cam = cam;

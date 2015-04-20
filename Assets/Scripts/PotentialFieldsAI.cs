@@ -1,20 +1,22 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System;
 
-public class FirstAI : Player {
-
+public class PotentialFieldsAI : Player {
+	
 	public class Priority : IComparable 
 	{
 		public Waypoint wayp;
 		public int priority;
-	
+		public int originalP;
+		
 		public Priority()
 		{
 			wayp = null;
 			priority = 0;
+			originalP = 0;
 		}
-	
+		
 		public int CompareTo(object other)
 		{
 			Priority that = other as Priority;
@@ -38,7 +40,7 @@ public class FirstAI : Player {
 	public bool runOnce;
 	//boolean to see if the priority of nodes have changed
 	public bool priorityChanged;
-
+	
 	void Start ()
 	{
 		//This finds the controller object which holds information about the game, statistics for troops, and the human and AI classes
@@ -83,7 +85,7 @@ public class FirstAI : Player {
 			levelTwo();
 			//Defends a waypoint that's being attacked
 			levelThree();
-
+			
 			if(first!=null && second!=null && first.hasTroop ())
 			{	
 				if(first.checkPCounter(second)<=4)
@@ -106,7 +108,7 @@ public class FirstAI : Player {
 			if(base.mover.gameObject.name.Equals ("TeamRed"))
 			{
 				if(GameObject.Find ("TeamRed")!=null)
-			    {	
+				{	
 					homeBase = (Waypoint)(GameObject.Find("TeamRed").GetComponent("Waypoint"));
 					homeBase.addTroopRedS ();
 					gold-=speedCost;
@@ -126,12 +128,12 @@ public class FirstAI : Player {
 		}
 		
 	}
-
+	
 	public override int numberBought()
 	{
 		return speedCost - 25;
 	}
-
+	
 	public override int numberLost()
 	{
 		findBlues ();
@@ -142,7 +144,7 @@ public class FirstAI : Player {
 		}
 		return numberBought() - stock;
 	}
-
+	
 	public void levelOne()
 	{
 		ArrayList potentialTwo = new ArrayList();
@@ -162,7 +164,7 @@ public class FirstAI : Player {
 			second = returnRandom (potentialTwo);
 		}
 	}
-
+	
 	public void levelTwo()
 	{
 		int highest = -1;
@@ -213,7 +215,7 @@ public class FirstAI : Player {
 		{}
 		first = returnRandom (choices);
 	}
-
+	
 	public void levelThree()
 	{
 		//Checking to see if waypoints are being attacked
@@ -229,7 +231,53 @@ public class FirstAI : Player {
 			}
 		}
 	}
+	
+	public void levelFour()
+	{
+		//This level prepares the AI for the next run through by changing priorities if necessary
+		ArrayList priorUp = new ArrayList();
+		ArrayList priorDown = new ArrayList();
+		
+		foreach(Waypoint b in blues)
+		{
+			if(b.getCountTotal()>=4)
+			{
+				foreach(Waypoint w in b.getArray())
+				{
+					priorUp.Add(w);
+				}
+			}
+		}
 
+		if(priorUp.Count > 0)
+		{
+			foreach(Priority pri in priorities)
+			{
+				for(int i=0; i < priorUp.Count; i++)
+				{
+					if(pri.wayp.Equals (priorUp[i]))
+					{
+						pri.priority+=1;
+					}
+				}
+			}
+		}
+
+		if(priorDown.Count>0)
+		{
+			foreach(Priority pri in priorities)
+			{
+				for(int i=0; i < priorDown.Count; i++)
+				{
+					if(pri.wayp.Equals (priorDown[i]))
+					{
+						pri.priority-=1;
+					}
+				}
+			}
+		}
+	}
+	
 	public void findBlues()
 	{
 		ArrayList temp = new ArrayList();
@@ -248,12 +296,12 @@ public class FirstAI : Player {
 		blues = temp;
 		bCount = i;
 	}
-
+	
 	public void GimmeMoney()
 	{
 		gold++;
 	}
-
+	
 	public Waypoint returnRandom(ArrayList waypoints)
 	{
 		System.Random rnd = new System.Random ();
@@ -266,7 +314,7 @@ public class FirstAI : Player {
 		return null;
 		
 	}
-
+	
 	public void reset()
 	{
 		first=null;
@@ -294,6 +342,7 @@ public class FirstAI : Player {
 		toGo.Enqueue (root);
 		Priority p = new Priority();
 		p.priority = 0;
+		p.originalP = 0;
 		p.wayp = root;
 		priorities.Add(p);
 		bool go;
@@ -308,7 +357,9 @@ public class FirstAI : Player {
 					foreach(Priority pr in priorities)
 					{
 						if(pr.wayp == root)
+						{
 							prior = pr.priority+1;
+						}
 						if(pr.wayp == w)
 						{
 							go = false;
@@ -320,6 +371,7 @@ public class FirstAI : Player {
 						toGo.Enqueue(w);
 						Priority newP = new Priority();
 						newP.priority = prior;
+						newP.originalP = prior;
 						newP.wayp = w;
 						priorities.Add(newP);
 					}
