@@ -104,6 +104,10 @@ public abstract class Player : MonoBehaviour {
 		else {return false;}
 	}
 
+	public abstract int numberBought ();
+	
+	public abstract int numberLost ();
+
 	public string getMover()
 	{
 		return mover.gameObject.name;

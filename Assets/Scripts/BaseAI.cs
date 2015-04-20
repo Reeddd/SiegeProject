@@ -1,26 +1,9 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System;
 
-public class FirstAI : Player {
+public class BaseAI : Player {
 
-	public class Priority : IComparable 
-	{
-		public Waypoint wayp;
-		public int priority;
-	
-		public Priority()
-		{
-			wayp = null;
-			priority = 0;
-		}
-	
-		public int CompareTo(object other)
-		{
-			Priority that = other as Priority;
-			return this.priority.CompareTo (that.priority);
-		}
-	}
 	//controller object
 	Controller cont;
 	//Array of waypoints known to be blue (set by findBlues())
@@ -38,7 +21,7 @@ public class FirstAI : Player {
 	public bool runOnce;
 	//boolean to see if the priority of nodes have changed
 	public bool priorityChanged;
-
+	
 	void Start ()
 	{
 		//This finds the controller object which holds information about the game, statistics for troops, and the human and AI classes
@@ -52,7 +35,7 @@ public class FirstAI : Player {
 		second = null;
 		nextMove = 5f;
 		pause = 2.3f;
-		mover = null;
+		//mover = null;
 		blues = new ArrayList();
 		bCount=0;
 		gold = 0;
@@ -69,7 +52,6 @@ public class FirstAI : Player {
 		//only runs once to get the priorities once everything is initialized
 		if (runOnce)
 		{
-			findPriorities();
 			runOnce = false;
 		}
 		//If the current time is greater than the nextMove value (set to Time.time + added time)
@@ -79,11 +61,6 @@ public class FirstAI : Player {
 			findBlues();
 			//Picks the closest blue and moves to it
 			levelOne();
-			//Picks a blue waypoint to move to based on the priority struct
-			levelTwo();
-			//Defends a waypoint that's being attacked
-			levelThree();
-
 			if(first!=null && second!=null && first.hasTroop ())
 			{	
 				if(first.checkPCounter(second)<=4)
@@ -106,7 +83,7 @@ public class FirstAI : Player {
 			if(base.mover.gameObject.name.Equals ("TeamRed"))
 			{
 				if(GameObject.Find ("TeamRed")!=null)
-			    {	
+				{	
 					homeBase = (Waypoint)(GameObject.Find("TeamRed").GetComponent("Waypoint"));
 					homeBase.addTroopRedS ();
 					gold-=speedCost;
@@ -126,23 +103,7 @@ public class FirstAI : Player {
 		}
 		
 	}
-
-	public override int numberBought()
-	{
-		return speedCost - 25;
-	}
-
-	public override int numberLost()
-	{
-		findBlues ();
-		int stock = 0;
-		foreach(Waypoint bl in blues)
-		{
-			stock += bl.getCountTotal();
-		}
-		return numberBought() - stock;
-	}
-
+	
 	public void levelOne()
 	{
 		ArrayList potentialTwo = new ArrayList();
@@ -162,74 +123,7 @@ public class FirstAI : Player {
 			second = returnRandom (potentialTwo);
 		}
 	}
-
-	public void levelTwo()
-	{
-		int highest = -1;
-		if(priorityChanged)
-		{
-			priorities.Sort();
-			priorities.Reverse();
-			priorityChanged = false;
-		}
-		ArrayList choices = new ArrayList();
-		ArrayList choicesTwo = new ArrayList ();
-		foreach (Priority pri in priorities)
-		{
-			int current = pri.priority;
-			if(highest <= current)
-			{
-				try
-				{
-					foreach(Waypoint wayp in pri.wayp.getArray ())
-					{
-						if(correctColor(wayp)) 
-						{
-							highest = current;
-							choicesTwo.Add(pri.wayp);
-							break;
-						}
-					}
-				}
-				
-				catch(NullReferenceException)
-				{
-					print("Priority had no wayp");
-				}
-			}
-		}
-		second = returnRandom (choicesTwo);
-		try
-		{
-			foreach(Waypoint w in second.getArray ())
-			{
-				if(correctColor (w))
-				{
-					choices.Add (w);
-				}
-			}
-		}
-		catch(NullReferenceException)
-		{}
-		first = returnRandom (choices);
-	}
-
-	public void levelThree()
-	{
-		//Checking to see if waypoints are being attacked
-		foreach(Waypoint way in blues)
-		{
-			if(way!=null)
-			{
-				if(way.getUnderFire())
-				{
-					first = way;
-					second = way.getAttackedFrom();
-				}
-			}
-		}
-	}
-
+	
 	public void findBlues()
 	{
 		ArrayList temp = new ArrayList();
@@ -249,9 +143,20 @@ public class FirstAI : Player {
 		bCount = i;
 	}
 
-	public void GimmeMoney()
+	public override int numberBought()
 	{
-		gold++;
+		return speedCost - 25;
+	}
+	
+	public override int numberLost()
+	{
+		findBlues ();
+		int stock = 0;
+		foreach(Waypoint bl in blues)
+		{
+			stock += bl.getCountTotal();
+		}
+		return numberBought() - stock;
 	}
 
 	public Waypoint returnRandom(ArrayList waypoints)
@@ -260,71 +165,22 @@ public class FirstAI : Player {
 		int whichOne = 0;
 		if(waypoints.Count > 0)
 		{
-			whichOne = rnd.Next (waypoints.Count);
+			whichOne = rnd.Next (waypoints.Count-1);
 			return (Waypoint)waypoints[whichOne];
 		}
 		return null;
-		
+
 	}
 
+	public void GimmeMoney()
+	{
+		gold++;
+	}
+	
 	public void reset()
 	{
 		first=null;
 		second=null;
 	}
-	
-	private void findPriorities()
-	{
-		priorities = new ArrayList();
-		Waypoint root = null;
-		Movement thisMover = (Movement)(GameObject.Find (getMover ()).GetComponent("Movement"));
-		foreach (Waypoint w in cont.getPoints())
-		{
-			if(w!=null && base.mover != null)
-			{
-				if(w.gameObject.name.Equals ( base.mover.gameObject.name))
-				{
-					root = w;
-					break;
-				}
-			}
-		}
-		int prior = 1;
-		Queue toGo = new Queue();
-		toGo.Enqueue (root);
-		Priority p = new Priority();
-		p.priority = 0;
-		p.wayp = root;
-		priorities.Add(p);
-		bool go;
-		while (toGo.Count != 0)
-		{
-			root = (Waypoint)toGo.Dequeue();
-			if(root != null)
-			{
-				foreach(Waypoint w in root.getArray ())
-				{
-					go = true;
-					foreach(Priority pr in priorities)
-					{
-						if(pr.wayp == root)
-							prior = pr.priority+1;
-						if(pr.wayp == w)
-						{
-							go = false;
-							break;
-						}
-					}
-					if(go)
-					{
-						toGo.Enqueue(w);
-						Priority newP = new Priority();
-						newP.priority = prior;
-						newP.wayp = w;
-						priorities.Add(newP);
-					}
-				}
-			}
-		}
-	}
+
 }

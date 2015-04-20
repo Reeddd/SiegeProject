@@ -55,7 +55,12 @@ public class Waypoint : MonoBehaviour
 		if (this.gameObject.transform.childCount > 0) 
 		{
 			Transform transCount = this.gameObject.transform.Find ("Counting");
-			textCount = transCount.gameObject;
+			try
+			{
+				textCount = transCount.gameObject;
+			}
+			catch(NullReferenceException)
+			{}
 		}
 	}
 
@@ -215,6 +220,11 @@ public class Waypoint : MonoBehaviour
 			newHealth+= getCountS()*cont.getBlueStatsS()[0];
 		}
 		health = newHealth;
+	}
+
+	public int getCountTotal()
+	{
+		return getCountA()+ getCountD() + getCountS();
 	}
 
 	public void takeDamage(int damage)
