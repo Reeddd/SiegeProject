@@ -24,7 +24,7 @@ public class Waypoint : MonoBehaviour
 	public int AtroopCount;
 	public int DtroopCount;
 	public int StroopCount;
-	private Queue troopQ;
+	public Queue troopQ;
 	public bool occupiedBlue;
 	public bool occupiedRed;
 	public int health;
