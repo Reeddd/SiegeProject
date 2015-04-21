@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System;
 
 public abstract class Player : MonoBehaviour {
 
@@ -110,7 +111,20 @@ public abstract class Player : MonoBehaviour {
 
 	public string getMover()
 	{
-		return mover.gameObject.name;
+		try
+		{
+			return mover.gameObject.name;
+		}
+		catch(NullReferenceException)
+		{
+			if(GameObject.Find ("Control")!=null)	//Don't ask me why this is here as opposed to in the start method, it just works this way and doesn't work that way
+			{
+				GameObject control = GameObject.Find("Control");	
+				Controller cont = (Controller)(control.GetComponent("Controller"));
+				cont.setMovers();
+			}
+		}
+		return null;
 	}
 
 }

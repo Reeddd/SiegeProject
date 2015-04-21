@@ -238,7 +238,10 @@ public class PotentialFieldsAI : Player {
 		//This level prepares the AI for the next run through by changing priorities if necessary
 		ArrayList priorUp = new ArrayList();
 		ArrayList priorDown = new ArrayList();
-		
+		foreach(Priority pri in priorities)
+		{
+			pri.priority=pri.originalP;
+		}
 		foreach(Waypoint b in blues)
 		{
 			if(b.getCountTotal()>=4)
@@ -326,8 +329,13 @@ public class PotentialFieldsAI : Player {
 	{
 		priorities = new ArrayList();
 		Waypoint root = null;
-		Movement thisMover = (Movement)(GameObject.Find (getMover ()).GetComponent("Movement"));
-		foreach (Waypoint w in cont.getPoints())
+		try
+		{
+			Movement thisMover = (Movement)(GameObject.Find (getMover ()).GetComponent("Movement"));
+		}
+		catch(NullReferenceException)
+		{}
+			foreach (Waypoint w in cont.getPoints())
 		{
 			if(w!=null && base.mover != null)
 			{

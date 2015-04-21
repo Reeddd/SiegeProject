@@ -31,28 +31,33 @@ public class Controller : MonoBehaviour
 	public char recent;
 	GameObject tester;
 
+
+	Player potentialFieldCont;
+	Player potentialFieldTest;
+	Player baseAICont;
+	Player baseAITest;
+	Player decisionCont;
+	Player decisionTest;
+	Player firstCont;
+	Player firstTest;
+
 	void Start () 
 	{
 		inArray = false;
 		waypoints = new Waypoint[15];
 		countW = 0;
 		tester = GameObject.Find ("Tester");
-		if (GameObject.Find ("Tester") != null) 
-		{
-			//red = (FirstAI)(tester.GetComponent ("FirstAI"));
-		}
-		else
-		{
-			//red = (Human)(this.GetComponent ("Human"));
-		}
-		red = (PotentialFieldsAI)(this.GetComponent ("PotentialFieldsAI"));
-		blue = (BaseAI)(tester.GetComponent("BaseAI"));
-		//ai2 = this.addComponent(FirstAI);
-		if(red!=null)
-			red.setMover ("TeamRed");
-		if(blue!=null)
-			blue.setMover ("TeamBlue");
 
+		potentialFieldCont = (PotentialFieldsAI)(this.GetComponent ("PotentialFieldsAI"));
+		potentialFieldTest = (PotentialFieldsAI)(tester.GetComponent ("PotentialFieldsAI"));
+		baseAICont = (BaseAI)(this.GetComponent("BaseAI"));
+		baseAITest = (BaseAI)(tester.GetComponent("BaseAI"));
+		decisionCont = (DecisionTreeAI)(this.GetComponent("DecisionTreeAI"));
+		decisionTest = (DecisionTreeAI)(tester.GetComponent("DecisionTreeAI"));
+		firstCont = (FirstAI)(this.GetComponent("FirstAI"));
+		firstTest = (FirstAI)(tester.GetComponent("FirstAI"));
+
+		setTeams ("Potential", "Potential");
 		/********** IMPORTANT ************
 		 * 
 		  The first 3 values in this six long (0,1,2) array are values for RED
@@ -71,12 +76,83 @@ public class Controller : MonoBehaviour
 		//current.wayNumber = 1;
 		//organizePoints (current);
 	}
-	
-	void startup()
+
+	public void setMovers()
 	{
-			
+		if(red!=null)
+			red.setMover ("TeamRed");
+		if(blue!=null)
+			blue.setMover ("TeamBlue");
 	}
-	
+
+	public void setTeams(string redPlayer, string bluePlayer)
+	{
+		unsetPlayers();
+		if(redPlayer.Equals ("Potential"))
+		{
+			red = potentialFieldCont;
+			((PotentialFieldsAI)(this.GetComponent ("PotentialFieldsAI"))).enabled = true;
+		}
+		else if(redPlayer.Equals ("Base"))
+		{
+			red = baseAICont;
+			((BaseAI)(this.GetComponent ("BaseAI"))).enabled = true;
+		}
+		else if(redPlayer.Equals ("Decision"))
+		{
+			red = decisionCont;
+			((DecisionTreeAI)(this.GetComponent ("DecisionTreeAI"))).enabled = true;
+		}
+		else if(redPlayer.Equals ("First"))
+		{
+			red = firstCont;
+			((FirstAI)(this.GetComponent ("FirstAI"))).enabled = true;
+		}
+		else
+		{
+			red = null;
+		}
+
+		if(bluePlayer.Equals ("Potential"))
+		{
+			blue = potentialFieldTest;
+			((PotentialFieldsAI)(tester.GetComponent ("PotentialFieldsAI"))).enabled = true;
+		}
+		else if(bluePlayer.Equals ("Base"))
+		{
+			blue = baseAITest;
+			((BaseAI)(tester.GetComponent("BaseAI"))).enabled = true;
+		}
+		else if(bluePlayer.Equals ("Decision"))
+		{
+			blue = decisionTest;
+			((DecisionTreeAI)(tester.GetComponent ("DecisionTreeAI"))).enabled = true;
+		}
+		else if(bluePlayer.Equals ("First"))
+		{
+			blue = firstTest;
+			((FirstAI)(tester.GetComponent ("FirstAI"))).enabled = true;
+		}
+		else
+		{
+			blue = null;
+		}
+		//ai2 = this.addComponent(FirstAI);
+		setMovers ();
+	}
+
+	public void unsetPlayers()
+	{
+		((PotentialFieldsAI)(this.GetComponent ("PotentialFieldsAI"))).enabled = false;
+		((PotentialFieldsAI)(tester.GetComponent ("PotentialFieldsAI"))).enabled = false;
+		((BaseAI)(this.GetComponent("BaseAI"))).enabled = false;
+		((BaseAI)(tester.GetComponent("BaseAI"))).enabled = false;
+		((DecisionTreeAI)(this.GetComponent("DecisionTreeAI"))).enabled = false;
+		((DecisionTreeAI)(tester.GetComponent("DecisionTreeAI"))).enabled = false;
+		((FirstAI)(this.GetComponent("FirstAI"))).enabled = false;
+		((FirstAI)(tester.GetComponent("FirstAI"))).enabled = false;
+	}
+
 	void Update () 
 	//Gets the first and second nodes for movement
 	{
