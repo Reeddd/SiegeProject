@@ -8,7 +8,7 @@ public class DecisionTreeAI : Player {
 	private const int ATTACK = 0;
 	private const int DEFENSE = 1;
 	private const int SPEED = 2;
-
+	private bool initialized;
 	//array defining which waypoints are adjacent to which others
 	bool[,] adjacencies;
 	//distances of each corresponding waypoint in waypoints from the home base
@@ -20,6 +20,7 @@ public class DecisionTreeAI : Player {
 	bool binColor;
 	int attackCost;
 	int gold;
+	int troops;
 
  // true = red, false = blue
 
@@ -37,6 +38,8 @@ public class DecisionTreeAI : Player {
 			tq = new Queue[wps.Length];
 			occupied = new int[wps.Length];
 			for(int i = 0; i < wps.Length; i++){
+				if(wps[i] == null) 
+					break;
 				tq[i] = (Queue)wps[i].troopQ.Clone();
 				if(wps[i].occupiedRed)
 					occupied[i] = 1;
@@ -55,20 +58,26 @@ public class DecisionTreeAI : Player {
 		 */
 		public bool equals(GameState other){
 			for(int i = 0; i < tq.Length; i++){
+				if(tq[i] == null) 
+					break;
 				if(tq[i].Count != other.tq[i].Count || occupied[i] != other.occupied[i])
 					return false;
 			}
 			return true;
 		}
 
-		public GameState(){
+		public GameState(int numWaypoints){
 			children = new LinkedList<GameState>();
 			fromWP = toWP = -1;
+			tq = new Queue[numWaypoints]; 
+			occupied = new int[numWaypoints];
 		}
 
 		public GameState stateOnlyCopy(){
-			GameState gs = new GameState();
+			GameState gs = new GameState(tq.Length);
 			for(int i = 0; i < tq.Length; i++){
+				if(tq[i] == null)
+					break;
 				gs.tq[i] = (Queue)tq[i].Clone();
 				Array.Copy(occupied, gs.occupied, occupied.Length);
 			}
@@ -80,7 +89,7 @@ public class DecisionTreeAI : Player {
 		}
 
 		public bool isLeaf(){
-			return children.Count > 0;
+			return children.Count == 0;
 		}
 
 		public void growOneLevel(Waypoint[] wps, bool binColor, bool[,] adjacencies){
@@ -110,17 +119,20 @@ public class DecisionTreeAI : Player {
 		//root is a leaf, and isDTturn is true if it is this DT AI's turn 
 		public void addAllChildren(bool isDTturn, Waypoint[] wps, bool binColor, bool[,] adjacencies){
 			//currentColor is the color of the player that is moving. 
-			bool currentColor = isDTturn == binColor;
+			bool currentColor = (isDTturn == binColor);
 			//for every node
 			GameState temp;
 			for(int wpIndex = 0; wpIndex < wps.Length; wpIndex++){
+				if(wps[wpIndex] == null)
+					break;
 				if(currentColor ? (occupied[wpIndex] == 1) : (occupied[wpIndex] == 2)){
 					//for every path from the current node
 					for(int pathIndex = 0; pathIndex < wps.Length; pathIndex++){
+						if(wps[pathIndex] == null)
+							break;
 						if(!adjacencies[wpIndex,pathIndex]) continue;
 						//make a state for the troop that would be moved along the path
 						temp = stateOnlyCopy();
-						String troop = (String)temp.tq[wpIndex].Dequeue();
 						//if target waypoint is empty or occupied by current color
 						if(currentColor ? temp.occupied[pathIndex] != 2 : temp.occupied[pathIndex] != 1){
 							temp.tq[pathIndex].Enqueue(temp.tq[wpIndex].Dequeue());
@@ -138,8 +150,8 @@ public class DecisionTreeAI : Player {
 						if(temp.tq[wpIndex].Count == 0){
 							temp.occupied[wpIndex] = 0;
 						}
-						temp.toWP = wpIndex;
-						temp.fromWP = pathIndex;
+						temp.fromWP = wpIndex;
+						temp.toWP = pathIndex;
 						//add that child to the root's children
 						addChild(temp);
 					}
@@ -160,6 +172,8 @@ public class DecisionTreeAI : Player {
 		int sum = 0;
 		int mult;
 		for(int i = 0; i < leaf.occupied.Length; i++){
+			if(waypoints[i] == null) 
+				break;
 			mult = 1;
 			//if waypoint is occupied by enemy
 			if(binColor ? leaf.occupied[i] == 2 : leaf.occupied[i] == 1)
@@ -199,7 +213,13 @@ public class DecisionTreeAI : Player {
 		return choice;
 	}
 
-	void initializeMapRepresentation(){
+	void Start(){
+		initialized = false;
+	}
+
+	void init(){
+		InvokeRepeating("GimmeMoney", 1.5f, 0.2f);
+		troops = 0;
 		if(GameObject.Find ("Control")!=null)
 		{
 			GameObject control = GameObject.Find("Control");
@@ -231,7 +251,7 @@ public class DecisionTreeAI : Player {
 		while(queue.Count > 0){
 			wp = queue.Dequeue();
 			thisIndex = indexOfWaypoint(wp);
-			adjacentPoints = wp.getArray();
+			adjacentPoints = wp.getArray(); //TODO maybe empty array error
 			for(int i = 0; i < adjacentPoints.Length; i++){
 				thatIndex = indexOfWaypoint(adjacentPoints[i]);
 				adjacencies[thisIndex, thatIndex] = true;
@@ -265,52 +285,58 @@ public class DecisionTreeAI : Player {
 				attackCost = attackCost+1;
 			}
 		}
+		troops++;
 	}
 
 	void Update ()
 	{
+		if(!initialized){
+			init();
+			initialized = true;
+		}
 		GameState root = new GameState(waypoints);
-		GameState decision;
-		while(true){
-			//if $ buy troop
-			if(gold > attackCost)
-				buyAttackTroop();
+		GameState decision = null;
+		//if $ buy troop
+		if(gold > attackCost)
+			buyAttackTroop();
 
-			//if root is different from game state, reset tree to new root.
-			GameState current = new GameState(waypoints);
-			if(!root.equals(current)){
-				root = current;
-			}
-			//grow tree to minimum height/add one layer.
+		//if root is different from game state, reset tree to new root.
+		GameState current = new GameState(waypoints);
+		if(!root.equals(current)){
+			root = current;
+		}
+		//grow tree to minimum height/add one layer.
+		if (troops > 0) //TODO loss of troops reflected here?
 			root.growOneLevel(waypoints, binColor, adjacencies);
-			//evaluate tree, log decision
+		//evaluate tree, log decision
+		if(!root.isLeaf()){ 
 			decision = getChoice(root);
-			//if time up, execute & reset decision, reset tree to root
-			//If the current time is greater than the nextMove value (set to Time.time + added time)
-			if(Time.time > nextMove)	
-			{
-				first = waypoints[decision.fromWP];
-				second = waypoints[decision.toWP];
-				//TODO Defends a waypoint that's being attacked
-			
-				if(first!=null && second!=null && first.hasTroop ())
-				{	
-					if(first.checkPCounter(second)<=4) 
-					{
-						//uses the mover class to move a troop from first to second
-						mover.moveTroop (moveHelp(), first, second);
-						//Increments the path counter for both waypoints (how many troops are on a path between waypoints)
-						first.plusPCounter(second);
-						second.plusPCounter (first);
-						//first.subtractS();
-						//If the waypoint has no more troops, it becomes gray (neutral)
-						first.checkIt ();
-					}
+			first = waypoints[decision.fromWP];
+			second = waypoints[decision.toWP];
+		}
+		//if time up, execute & reset decision, reset tree to root
+		//If the current time is greater than the nextMove value (set to Time.time + added time)
+		if(Time.time > nextMove)	
+		{
+			//TODO Defends a waypoint that's being attacked
+		
+			if(first != null && second != null && first.hasTroop())
+			{	
+				if(first.checkPCounter(second)<=4) 
+				{
+					//uses the mover class to move a troop from first to second
+					mover.moveTroop(moveHelp(), first, second);
+					//Increments the path counter for both waypoints (how many troops are on a path between waypoints)
+					first.plusPCounter(second);
+					second.plusPCounter (first);
+					//first.subtractS();
+					//If the waypoint has no more troops, it becomes gray (neutral)
+					first.checkIt ();
 				}
-				nextMove = Time.time + pause;
 			}
-
-	}}
+			nextMove = Time.time + pause;
+		}
+	}
 	/**
 	 * Predicts which troop will win. Takes the types of both troops.
 	 * Returns 1 if t1 will win, 2 if t2 will win, and 0 if the proc determines the win.
@@ -381,5 +407,9 @@ public class DecisionTreeAI : Player {
 		}
 		return numberBought() - stock;*/
 		return 0;
+	}
+	public void GimmeMoney()
+	{
+		gold++;
 	}
 }
