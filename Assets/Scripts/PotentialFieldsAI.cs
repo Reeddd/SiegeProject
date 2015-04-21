@@ -85,7 +85,8 @@ public class PotentialFieldsAI : Player {
 			levelTwo();
 			//Defends a waypoint that's being attacked
 			levelThree();
-			
+
+			levelFour ();
 			if(first!=null && second!=null && first.hasTroop ())
 			{	
 				if(first.checkPCounter(second)<=4)
