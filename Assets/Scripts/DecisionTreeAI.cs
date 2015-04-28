@@ -477,9 +477,6 @@ public class DecisionTreeAI : Player
 				{
 					//uses the mover class to move a troop from first to second
 					mover.moveTroop(moveHelp(), first, second);
-					//Increments the path counter for both waypoints (how many troops are on a path between waypoints)
-					first.plusPCounter(second);
-					second.plusPCounter (first);
 					//first.subtractS();
 					//If the waypoint has no more troops, it becomes gray (neutral)
 					first.checkIt ();

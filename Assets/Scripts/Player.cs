@@ -11,6 +11,7 @@ public abstract class Player : MonoBehaviour {
 	protected Waypoint first;
 	protected float nextMove;
 	protected float pause;
+	
 	// Use this for initialization
 	void Start () 
 	{

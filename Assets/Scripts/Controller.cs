@@ -30,8 +30,7 @@ public class Controller : MonoBehaviour
 	private int[] Sstats;
 	public char recent;
 	GameObject tester;
-
-
+	
 	Player potentialFieldCont;
 	Player potentialFieldTest;
 	Player baseAICont;
@@ -57,7 +56,7 @@ public class Controller : MonoBehaviour
 		firstCont = (FirstAI)(this.GetComponent("FirstAI"));
 		firstTest = (FirstAI)(tester.GetComponent("FirstAI"));
 
-		setTeams ("Potential", "Potential");
+		setTeams ("First", "Base");
 		/********** IMPORTANT ************
 		 * 
 		  The first 3 values in this six long (0,1,2) array are values for RED

@@ -23,7 +23,11 @@ public class TestAIs : MonoBehaviour {
 	float timer;
 	string path1 = @".\FirstVBaseResults.txt";
 	string path2 = @".\PotentialVBaseResults.txt";
+	string path3 = @".\DecisionVBaseResults.txt";
 	string masterPath = @".\trackTesting.txt";
+
+	public float blueWins;
+	public float redWins;
 
 	//master path, set to one of the numbered paths above
 	string path;
@@ -41,6 +45,8 @@ public class TestAIs : MonoBehaviour {
 			control = GameObject.Find("Control");	
 			cont = (Controller)(control.GetComponent("Controller"));
 		}
+		blueWins = 0;
+		redWins = 0;
 	}
 	
 	// Update is called once per frame
@@ -74,6 +80,7 @@ public class TestAIs : MonoBehaviour {
 		using(StreamWriter sw = File.AppendText(path))
 		{
 			sw.WriteLine(toWrite);
+			sw.WriteLine ("Red won: " + ((redWins / (redWins+blueWins))*100.0f)+"% Blue won: "+((blueWins / (redWins+blueWins))*100.0f)+"%");
 		}
 		using(StreamWriter newTask = new StreamWriter(masterPath, false))
 		{
@@ -83,6 +90,14 @@ public class TestAIs : MonoBehaviour {
 				newTask.WriteLine ("Potential");
 			newTask.WriteLine ("Run Count: " + (results.testsRun+1));
 		}
+	}
+
+	public void troopWin(string color)
+	{
+		if(color.Equals("blue"))
+		   blueWins+=1;
+		else if(color.Equals("red"))
+			redWins+=1;
 	}
 
 	private Results readMaster()

@@ -27,6 +27,7 @@ public abstract class Troop : MonoBehaviour
 	public Troop otherTroop;
 	public Troop potentialTroop;
 	string ident = "";
+	private bool trackBattle;
 
 	public double timer;
 	
@@ -80,6 +81,13 @@ public abstract class Troop : MonoBehaviour
 			if(potentialTroop==null  || otherTroop==null)
 			{
 				setAll (false, false, false);
+				if(getTracking())
+				{
+					GameObject tester = GameObject.Find("Tester");
+					TestAIs aiTest = (TestAIs)tester.GetComponent("TestAIs");
+					aiTest.troopWin(getColor ());
+					setTracking(false);
+				}
 			}
 			else
 				this.attackTroop(otherTroop);
@@ -212,7 +220,7 @@ public abstract class Troop : MonoBehaviour
 		{
 			second.GetComponent<Waypoint>().setUnderFire(false);
 			second.GetComponent<Waypoint>().setAttackedFrom(null);
-			restart ();
+			//restart ();
 			setAll (false, false, false);
 			float dist = Vector3.Distance(second.collider.bounds.center, transform.position);
 			transform.LookAt(second.collider.bounds.center);	//Find the node we are moving to
@@ -390,7 +398,7 @@ public abstract class Troop : MonoBehaviour
 				}
 				else
 				{
-					restart ();
+					//restart ();
 					setAll (false, false, false);
 				}
 			}
@@ -411,4 +419,6 @@ public abstract class Troop : MonoBehaviour
 	public bool getWaiting(){return (waiting);}
 	public bool getSieging(){return sieging;}
 	public bool getAttacking(){return attacking;}
+	public bool getTracking(){return trackBattle;}
+	public void setTracking(bool track){trackBattle = track;}
 }

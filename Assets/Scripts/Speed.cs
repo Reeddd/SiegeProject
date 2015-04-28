@@ -46,6 +46,10 @@ public class Speed : Troop
 		{
 			if(timer < Time.time)
 			{
+				if(troop.getHealth () == this.getHealth())
+				{
+					setTracking(true);				
+			    }
 				troop.takeDamage (damage);
 				timer=Time.time + attackRate;
 			}
@@ -79,7 +83,7 @@ public class Speed : Troop
 			}
 		}
 	}
-	
+
 	public override int getHealth(){return health;}
 	public override void setHealth(int h){health = h;}
 	public override float getAttackRate(){return attackRate;}

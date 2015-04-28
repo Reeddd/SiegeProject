@@ -12,3 +12,5 @@ W: PotentialFieldsAI L: BaseAI Time: 435.3375 Winner Bought: 45 Winner Deaths: 4
 W: PotentialFieldsAI L: BaseAI Time: 248.7462 Winner Bought: 30 Winner Deaths: 25 Loser Bought: 30 Loser Deaths: 27
 W: PotentialFieldsAI L: BaseAI Time: 294.8979 Winner Bought: 34 Winner Deaths: 27 Loser Bought: 34 Loser Deaths: 33
 W: PotentialFieldsAI L: BaseAI Time: 288.8376 Winner Bought: 34 Winner Deaths: 28 Loser Bought: 34 Loser Deaths: 34
+W: PotentialFieldsAI L: BaseAI Time: 390.2268 Winner Bought: 42 Winner Deaths: 39 Loser Bought: 42 Loser Deaths: 41
+Red won: 17.94872% Blue won: 82.05128%
