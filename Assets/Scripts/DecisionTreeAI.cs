@@ -6,10 +6,10 @@ using System.Collections.Generic;
 public class DecisionTreeAI : Player 
 {
 
-	private const int weightOfBases = 10;
+	private const int weightOfBases = 15;
 	private const int weightOfWaypoint = 1;
-	private const int weightOfProximity = 2;
-	private const int minimumTreeDepth = 2;
+	private const int weightOfProximity = 1;
+	private const int minimumTreeDepth = 3;
 	private const bool predictEnemy = false;
 
 	private Waypoint dtBase;

@@ -23,6 +23,7 @@ public class TestAIs : MonoBehaviour {
 	float timer;
 	string path1 = @".\FirstVBaseResults.txt";
 	string path2 = @".\PotentialVBaseResults.txt";
+	string path3 = @".\DTvBaseResults.txt"; //hey!
 	string masterPath = @".\trackTesting.txt";
 
 	//master path, set to one of the numbered paths above
