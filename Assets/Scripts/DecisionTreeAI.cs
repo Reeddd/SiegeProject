@@ -6,9 +6,15 @@ using System.Collections.Generic;
 public class DecisionTreeAI : Player 
 {
 
-	private const int ATTACK = 0;
-	private const int DEFENSE = 1;
-	private const int SPEED = 2;
+	private const int weightOfBases = 15;
+	private const int weightOfWaypoint = 1;
+	private const int weightOfProximity = 1;
+	private const int minimumTreeDepth = 3;
+	private const bool predictEnemy = false;
+
+	private Waypoint dtBase;
+	private Waypoint enemyBase;
+
 	private bool initialized;
 
 	//array defining which waypoints are adjacent to which others
@@ -171,12 +177,15 @@ public class DecisionTreeAI : Player
 				//add based on player's moved
 				addAllChildren(true, wps, binColor, adjacencies);
 
-				//add based on enemy's response to player's moves
-				LinkedListNode<GameState> temp = children.First;
-				while(temp != null) //TODO does this null check work?
+				if(predictEnemy)
 				{
-					temp.Value.addAllChildren(false, wps, binColor, adjacencies); 
-					temp = temp.Next;
+					//add based on enemy's response to player's moves
+					LinkedListNode<GameState> temp = children.First;
+					while(temp != null)
+					{
+						temp.Value.addAllChildren(false, wps, binColor, adjacencies); 
+						temp = temp.Next;
+					}
 				}
 			}
 		}
@@ -277,11 +286,21 @@ public class DecisionTreeAI : Player
 				//add to state's value the product of the number of troops 
 				//and the distance of the troop from the homebase
 				//constant adds value to holding a waypoint
-				sum += (leaf.tq[i].Count * WPDistance[i] + 5);
+				sum += (leaf.tq[i].Count * WPDistance[i]*weightOfProximity + weightOfWaypoint);
+				//if DT occupies enemy base
+				if(waypoints[i] == enemyBase)
+				{
+					sum += weightOfBases;
+				}
 			}
 			else if(leaf.occupied[i] != 0) //occupied by DT's enemy
 			{
-				sum -= (leaf.tq[i].Count * (maxWPDistance-WPDistance[i]) + 5);
+				sum -= (leaf.tq[i].Count * (maxWPDistance-WPDistance[i])*weightOfProximity + weightOfWaypoint);
+				//if enemy occupies dtbase
+				if(waypoints[i] == dtBase)
+				{
+					sum -= weightOfBases;
+				}
 			}
 
 		}
@@ -370,6 +389,8 @@ public class DecisionTreeAI : Player
 			binColor = false;
 		}
 
+		dtBase = wp;
+		enemyBase = (Waypoint)(GameObject.Find(binColor ? "TeamBlue" : "TeamRed").GetComponent("Waypoint"));
 		queue.Enqueue(wp);
 		int thisIndex = indexOfWaypoint(wp);
 		added[thisIndex] = true;
@@ -380,7 +401,7 @@ public class DecisionTreeAI : Player
 		{
 			wp = queue.Dequeue();
 			thisIndex = indexOfWaypoint(wp);
-			adjacentPoints = wp.getArray(); //TODO maybe empty array error
+			adjacentPoints = wp.getArray(); 
 			for(int i = 0; i < adjacentPoints.Length; i++)
 			{
 				thatIndex = indexOfWaypoint(adjacentPoints[i]);
@@ -454,8 +475,10 @@ public class DecisionTreeAI : Player
 		//grow tree to minimum height/add one layer.
 		if (troops > 0) //TODO loss of troops reflected here?
 		{
-			root.growOneLevel(waypoints, binColor, adjacencies);
-			root.growOneLevel(waypoints, binColor, adjacencies);
+			for(int i = 0; i < minimumTreeDepth; i++)
+			{
+				root.growOneLevel(waypoints, binColor, adjacencies);
+			}
 		}
 		//evaluate tree, log decision
 		if(!root.isLeaf())
