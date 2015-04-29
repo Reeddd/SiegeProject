@@ -96,7 +96,7 @@ public class FirstAI : Player {
 				}
 			}
 			reset();
-			nextMove = Time.time + pause;
+			resetTimer ();
 		}
 		if(gold > speedCost)
 		{	

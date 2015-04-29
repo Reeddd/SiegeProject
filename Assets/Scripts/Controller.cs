@@ -338,9 +338,9 @@ public class Controller : MonoBehaviour
 		cam.GetComponent<GUI_VictoryMenu> ().enabled = true;
 		TestAIs aiTest = (TestAIs)tester.GetComponent("TestAIs");
 		if(color.Equals("Red"))
-			aiTest.addWin(red.ToString(), blue.ToString (), red.numberBought (), red.numberLost(), blue.numberBought (), blue.numberLost());
+			aiTest.addWin(red.ToString(), blue.ToString (), red.numberBought (), blue.numberBought (), "Red");
 		else if(color.Equals ("Blue"))
-			aiTest.addWin (blue.ToString(), red.ToString (), blue.numberBought(), blue.numberLost(), red.numberBought (), red.numberLost());
+			aiTest.addWin (blue.ToString(), red.ToString (), blue.numberBought(), red.numberBought (), "Blue");
 	}
 	
 }

@@ -27,6 +27,7 @@ public abstract class Player : MonoBehaviour {
 
 	public void resetTimer()
 	{
+		pause = UnityEngine.Random.Range (2.2f,2.4f);
 		nextMove = Time.time + pause;
 	}
 

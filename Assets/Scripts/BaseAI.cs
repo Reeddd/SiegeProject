@@ -73,7 +73,7 @@ public class BaseAI : Player {
 				}
 			}
 			reset();
-			nextMove = Time.time + pause;
+			resetTimer ();
 		}
 		if(gold > speedCost)
 		{	

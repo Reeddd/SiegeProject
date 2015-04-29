@@ -92,14 +92,14 @@ public class PotentialFieldsAI : Player {
 				if(first.checkPCounter(second)<=4)
 				{
 					//uses the mover class to move a troop from first to second
-					mover.moveTroop (moveHelp(), first, second);
+					moveIt ();
 					//first.subtractS();
 					//If the waypoint has no more troops, it becomes gray (neutral)
 					first.checkIt ();
 				}
 			}
 			reset();
-			nextMove = Time.time + pause;
+			resetTimer ();
 		}
 		if(gold > speedCost)
 		{	

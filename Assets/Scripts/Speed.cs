@@ -68,6 +68,9 @@ public class Speed : Troop
 		{
 			base.getFirst().minusPCounter(base.getSecond ());
 			base.getSecond().minusPCounter(base.getFirst ());
+			GameObject tester = GameObject.Find("Tester");
+			TestAIs testy = (TestAIs)tester.GetComponent("TestAIs");
+			testy.addDeath(getColor ());
 			Destroy(gameObject);
 		}
 	}

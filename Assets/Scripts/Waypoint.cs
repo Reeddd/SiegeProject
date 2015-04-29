@@ -31,6 +31,7 @@ public class Waypoint : MonoBehaviour
 	GameObject textCount;
 	private bool underFire;
 	private Waypoint attackedFrom;
+	private TestAIs testy;
 	
 	public void Start ()
     {
@@ -39,6 +40,11 @@ public class Waypoint : MonoBehaviour
 		{
 			control = GameObject.Find("Control");	
 			cont = (Controller)(control.GetComponent("Controller"));
+		}
+		if(GameObject.Find ("Control")!=null)	//Don't ask me why this is here as opposed to in the start method, it just works this way and doesn't work that way
+		{
+			GameObject tester = GameObject.Find("Tester");
+			testy = (TestAIs)tester.GetComponent("TestAIs");
 		}
         count = 0;
 		AtroopCount = 0;
@@ -230,9 +236,11 @@ public class Waypoint : MonoBehaviour
 	public void takeDamage(int damage)
 	{
 		health-=damage;
+		string color = occupiedRed ? "red" : "blue"; 
 		if(health<=0)
 		{
 			health=0;
+			testy.addDeath(color);
 			AtroopCount=0;
 			StroopCount=0;
 			DtroopCount=0;
@@ -244,11 +252,20 @@ public class Waypoint : MonoBehaviour
 			if(health <= ((AtroopCount*cont.getRedStatsA ()[0])+(DtroopCount*cont.getRedStatsD()[0])+(StroopCount*cont.getRedStatsS()[0])-min))
 			{	
 				if(AtroopCount!=0)
+				{
+					testy.addDeath(color);
 					AtroopCount--;
+				}
 				else if(DtroopCount!=0)
+				{
+					testy.addDeath(color);
 					DtroopCount--;
+				}
 				else if(StroopCount!=0)
+				{
+					testy.addDeath(color);
 					StroopCount--;
+				}
 			}
 			checkIt ();
 		}
@@ -261,11 +278,20 @@ public class Waypoint : MonoBehaviour
 			{
 
 				if(AtroopCount!=0)
+				{
+					testy.addDeath(color);
 					AtroopCount--;
+				}
 				else if(DtroopCount!=0)
+				{
+					testy.addDeath(color);
 					DtroopCount--;
+				}
 				else if(StroopCount!=0)
+				{
+					testy.addDeath(color);
 					StroopCount--;
+				}
 			}
 		checkIt();
 		}

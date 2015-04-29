@@ -95,9 +95,13 @@ public abstract class Troop : MonoBehaviour
 		else if(waiting)
 		{
 			if(potentialTroop==null  || otherTroop==null)
+			{
 				setAll (false, false, false);
+			}
 			else if(!otherTroop.battling && !otherTroop.sieging && !otherTroop.waiting)
+			{
 				setAll (false, false, false);
+			}
 		}
 		else if(startMove)	//Start move is called below in the startM() method
 		{
@@ -247,7 +251,7 @@ public abstract class Troop : MonoBehaviour
 					transform.position= Vector3.MoveTowards(transform.position, second.collider.bounds.center, cont.getBlueStatsD()[2]*(.01f));
 			}
 			
-			if(dist < (second.gameObject.renderer.bounds.size[0] / 1.8f))		//When we get to that node
+			if(dist < (second.gameObject.renderer.bounds.size[0] / 1.5f))		//When we get to that node
 			{	
 				deactivate ();
 				setAll (false, false, false);

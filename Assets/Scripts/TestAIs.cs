@@ -28,6 +28,8 @@ public class TestAIs : MonoBehaviour {
 
 	public float blueWins;
 	public float redWins;
+	public int blueDeaths;
+	public int redDeaths;
 
 	//master path, set to one of the numbered paths above
 	string path;
@@ -118,7 +120,7 @@ public class TestAIs : MonoBehaviour {
 		}
 	}
 
-	public void addWin(string winAI, string lossAI, int winBought, int winDead, int lossBought, int lossDead)
+	public void addWin(string winAI, string lossAI, int winBought, int lossBought, string winColor)
 	{
 		Debug.Log (winAI);
 		string[] temp = winAI.Split (new Char[] {'('});
@@ -127,8 +129,17 @@ public class TestAIs : MonoBehaviour {
 		temp = lossAI.Split (new Char[] {'('});
 		temp = temp[1].Split(new Char[] {')'});
 		string lossFinal = temp [0];
-		string toPrint = "W: " + winFinal + " L: " + lossFinal + " Time: " + (Time.time - timer) + " Winner Bought: " + winBought + " Winner Deaths: " + winDead + " Loser Bought: " + lossBought + " Loser Deaths: " + lossDead;
+		string toPrint = "W: " + winFinal + " L: " + lossFinal + " Time: " + (Time.time - timer) + " Winner Bought: " + winBought + " Winner Deaths: " + (winColor.Equals("Red") ? redDeaths : blueDeaths) + " Loser Bought: " + lossBought + " Loser Deaths: " + (winColor.Equals("Red") ? blueDeaths : redDeaths);
 		writeResults (toPrint);
 		Application.LoadLevel ("Map2");
 	}
+
+	public void addDeath(string color)
+	{
+		if(color.Equals("blue"))
+			blueDeaths+=1;
+		else if(color.Equals("red"))
+			redDeaths+=1;
+	}
+
 }
