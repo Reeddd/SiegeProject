@@ -5,11 +5,11 @@ using System.Collections.Generic;
 
 public class DecisionTreeAI : Player 
 {
-
-	private const int weightOfBases = 15;
-	private const int weightOfWaypoint = 1;
-	private const int weightOfProximity = 1;
-	private const int minimumTreeDepth = 3;
+	
+	private const int weightOfWaypoint = 4;
+	private const int weightOfProximity = 3;
+	private const int weightOfBases = weightOfProximity*100;
+	private const int minimumTreeDepth = 2;
 	private const bool predictEnemy = false;
 
 	private Waypoint dtBase;
@@ -499,13 +499,14 @@ public class DecisionTreeAI : Player
 				if(first.checkPCounter(second)<=4) 
 				{
 					//uses the mover class to move a troop from first to second
-					mover.moveTroop(moveHelp(), first, second);
+					//mover.moveTroop(moveHelp(), first, second);
+					moveIt();
 					//first.subtractS();
 					//If the waypoint has no more troops, it becomes gray (neutral)
 					first.checkIt ();
 				}
 			}
-			nextMove = Time.time + pause;
+			resetTimer(); //nextMove = Time.time + pause;
 		}
 	}
 	/**
