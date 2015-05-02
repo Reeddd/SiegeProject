@@ -79,6 +79,8 @@ public class PotentialFieldsAI : Player {
 		{
 			//Find all waypoints that are blue
 			findBlues();
+
+			levelFour ();
 			//Picks the closest blue and moves to it
 			levelOne();
 			//Picks a blue waypoint to move to based on the priority struct
@@ -86,7 +88,7 @@ public class PotentialFieldsAI : Player {
 			//Defends a waypoint that's being attacked
 			levelThree();
 
-			levelFour ();
+
 			if(first!=null && second!=null && first.hasTroop ())
 			{	
 				if(first.checkPCounter(second)<=4)
@@ -183,7 +185,7 @@ public class PotentialFieldsAI : Player {
 				{
 					foreach(Waypoint wayp in pri.wayp.getArray ())
 					{
-						if(correctColor(wayp)) 
+						if(correctColor(wayp)&&wayp.checkRadius()) 
 						{
 							highest = current;
 							choicesTwo.Add(pri.wayp);
@@ -239,14 +241,29 @@ public class PotentialFieldsAI : Player {
 		{
 			pri.priority=pri.originalP;
 		}
-		foreach(Waypoint b in blues)
+		foreach(Priority pri in priorities)
 		{
-			if(b.getCountTotal()>=4)
+			if(pri.wayp.getCountTotal()>=4)
 			{
-				foreach(Waypoint w in b.getArray())
+				foreach(Waypoint w in pri.wayp.getArray())
 				{
-					priorUp.Add(w);
+					foreach(Priority p in priorities)
+					{
+						if(p.wayp == w && p.priority>pri.priority)
+							priorUp.Add(w);
+					}
 				}
+			}
+			if((pri.wayp.occupiedRed&&this.color.Equals("Red")||pri.wayp.occupiedBlue&&this.color.Equals("Blue"))&&pri.wayp.getCountTotal()==1)
+			{
+				priorUp.Add (pri.wayp);
+				priorUp.Add (pri.wayp);
+			}
+			if((pri.wayp.name.Equals ("TeamRed")&&this.color.Equals("Red"))||(pri.wayp.name.Equals ("TeamBlue")&&this.color.Equals ("Blue")))
+			{
+				priorDown.Add (pri.wayp);
+				priorDown.Add (pri.wayp);
+				priorDown.Add (pri.wayp);
 			}
 		}
 
@@ -277,6 +294,7 @@ public class PotentialFieldsAI : Player {
 				}
 			}
 		}
+		priorityChanged = true;
 	}
 	
 	public void findBlues()
